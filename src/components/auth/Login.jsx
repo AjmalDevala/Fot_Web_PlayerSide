@@ -1,10 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import  {loginValidation} from "../../helper/validate";
-
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { authenticate } from "../../redux/auth";
 function Login() {
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
   const Formik = useFormik({
     initialValues: {
       email: "",
@@ -14,10 +21,19 @@ function Login() {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
-    },
-  });
-  const navigate = useNavigate();
+    console.log("happy ending");
+      await axios.post('http://localhost:7007/api/userLogin',{values}).then((res)=>{
+        
+      let { token } = res.data;
+        localStorage.setItem('token', token);
+        dispatch(authenticate());
+        navigate('/')
+      }).catch((error)=>{
+        console.log(error)
+        toast.error(error.response.data.error)
+      }) 
+  }});
+ 
   return (
     <div className="h-screen bg-[url('/src/assets/images/playerlogin.jpg')] ">
       <Toaster position="top-center"></Toaster>
@@ -27,7 +43,7 @@ function Login() {
             Get started today
           </h1>
 
-          <form action="" class="mt-6 mb-0 space-y-4 rounded-lg p-8 shadow-2xl" onSubmit={Formik.handleSubmit}>
+          <form  class="mt-6 mb-0 space-y-4 rounded-lg p-8 shadow-2xl" onSubmit={Formik.handleSubmit}>
             <p class="text-lg font-medium">Sign in to your account</p>
 
             <div>
@@ -39,7 +55,7 @@ function Login() {
                 <input
                   type="email"
                   {...Formik.getFieldProps('email')}
-                  id="email"
+                  id="text"
                   class="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
                   placeholder="Enter email"
                 />
@@ -114,7 +130,7 @@ function Login() {
               <a
                
                 class="underline"
-                href="/signup"
+                onClick={()=>{navigate("/signup")}}
               >
                 Sign up
               </a>

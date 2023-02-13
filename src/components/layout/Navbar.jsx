@@ -1,75 +1,194 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Fragment } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
-function Navbar() {
-  const navigate = useNavigate()
+const Navbar = () => {
+  const navigate = useNavigate();
+
+  const home = (e) => {
+    e.preventDefault()
+    navigate("/");
+  };
+  const Profile = (e) => {
+    e.preventDefault()
+    navigate("/profile");
+  };
+  const Scout = (e) => {
+    e.preventDefault()
+    navigate("/scout");
+  };
+  const Chat = (e) => {
+    e.preventDefault()
+    navigate("/chat");
+  };
+  const pricing = (e) => {
+    e.preventDefault()
+    navigate("/pricing");
+  };
+
+  const navigation = [
+    { name: "Home", onclick: home, current: false },
+    { name: "Profile", onclick: Profile, current: false },
+    { name: "Scout", onclick: Scout, current: false },
+    { name: "Chat", onclick: Chat, current: false },
+    { name: "Pricing", onclick: pricing, current: false }
+  ];
+  const classNames = (...classes) => {
+    return classes.filter(Boolean).join(" ");
+  };
   return (
+    <Disclosure as="nav" className="bg-cyan-900">
+      {({ open }) => (
+        <>
+          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+            <div className="relative flex h-16 items-center justify-between">
+              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                {/* Mobile menu button*/}
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                  )}
+                </Disclosure.Button>
+              </div>
+              <div></div>
+              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <div className="flex flex-shrink-0 items-center">
+                  <a className="text-white text-lg hover:translate-scale-y-50" onclick={()=>{navigate("/")}}>.FOT-WEB</a>
+                  <img
+                    className="block h-10 w-auto lg:hidden"
+                    src="/src/assets/images/logo.png"
+                    alt="Your Company"
+                  />
+                  {/* <img
+                    className="hidden h-9 w-auto lg:block"
+                    src="/src/assets/images/logo.png"
+                    alt="Your Company"
+                  /> */}
+                </div>
+                <div className="hidden sm:ml-6 sm:block">
+                  <div className="flex space-x-4">
+                    {navigation.map((item) => (
+                      <button
+                        key={item.name}
+                        onClick ={(e)=> {
+                          item.onclick(e)
+                        }}
+                        className={classNames(
+                          item.current
+                            ? "bg-cyan-500 text-white"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                          "px-3 py-2 rounded-md text-sm font-medium"
+                        )}
+                        aria-current={item.current ? "page" : undefined}
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                {/* <button
+                  type="button"
+                  className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                >
+                  <span className="sr-only">View notifications</span>
+                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                </button> */}
 
-<nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
-  <div class="container flex flex-wrap items-center justify-between mx-auto">
-  <a onClick={()=>{navigate("/")}} class="flex items-center">
-      <img src="/src/assets/images/logo.png" class="h-6 mr-3 sm:h-9" alt="Flowbite Logo" />
-      <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">FOT-WEB</span>
-  </a>
-  <div class="flex items-center md:order-2">
-      <button type="button" class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-        <span class="sr-only">Open user menu</span>
-        <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo"/>
-      </button>
-      {/* <!-- Dropdown menu --> */}
-      <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
-        <div class="px-4 py-3">
-          <span class="block text-sm text-gray-900 dark:text-white">Bonnie Green</span>
-          <span class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">name@flowbite.com</span>
-        </div>
-        <ul class="py-2" aria-labelledby="user-menu-button">
-          <li>
-            <a onClick={()=>{navigete('/')}} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Home</a>
-          </li>
-          <li>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Tutorials</a>
-          </li>
-          <li>
-            <a  onClick={()=>{navigate('/playerScout')}} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Scout</a>
-          </li>
-          <li>
-            <a onClick={()=>{navigate('/playerProfile')}} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">My Profile</a>
-          </li>
-        </ul>
-      </div>
-      <button data-collapse-toggle="mobile-menu-2" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
-        <span class="sr-only">Open main menu</span>
-        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-    </button>
-  </div>
-  <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="mobile-menu-2">
-    <ul class="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-      <li>
-        <a onClick={()=>{navigate("/")}} class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white" aria-current="page">Home</a>
-      </li>
-      <li>
-        <a onClick={()=>{navigate("#")}}  class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Tutorials</a>
-      </li>
-      <li>
-        <a onClick={()=>{navigate("/scout")}} class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Scout</a>
-      </li>
-      <li>
-        <a onClick={()=>{navigate("/chat")}}  class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Chat</a>
-      </li>
-      <li>
-        <a onClick={()=>{navigate("/plrofile")}}  class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">My Profile</a>
-      </li>
-      <li>
-        <a onClick={()=>{navigate("/pricing")}}  class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Pricing</a>
-      </li>
-    </ul>
-  </div>
-  </div>
-</nav>
+                {/* Profile dropdown */}
+                <Menu as="div" className="relative ml-3">
+                  <div>
+                    <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                      <span className="sr-only">Open user menu</span>
+                      <img
+                        className="h-8 w-8 rounded-full"
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt=""
+                      />
+                    </Menu.Button>
+                  </div>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a
+                           onclick={()=>{navigate("/profile")}}
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                            Your Profile
+                          </a>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a
+                            href="#"
+                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                          >
+                            Settings
+                          </a>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a
+                            onClick={() => navigate("/login")}
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                            Sign out
+                          </a>
+                        )}
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              </div>
+            </div>
+          </div>
 
+          <Disclosure.Panel className="sm:hidden">
+            <div className="space-y-1 px-2 pt-2 pb-3">
+              {navigation.map((item) => (
+                <Disclosure.Button
+                  key={item.name}
+                  as="a"
+                  href={item.href}
+                  className={classNames(
+                    item.current
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                    "block px-3 py-2 rounded-md text-base font-medium"
+                  )}
+                  aria-current={item.current ? "page" : undefined}
+                >
+                  {item.name}
+                </Disclosure.Button>
+              ))}
+            </div>
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
+  );
+};
 
-
-  )
-}
-
-export default Navbar
+export default Navbar;

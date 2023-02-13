@@ -3,6 +3,7 @@ import PageNotFound from "./error/PageNotFound";
 import ChatPage from "./page/ChatPage";
 import Home from "./page/HomePage";
 import Login from "./page/LoginPage";
+import OtpPage from "./page/OtpPage";
 import PricingPage from "./page/PricingPage";
 import ProfilePage from "./page/ProfilePage";
 import ScoutPage from "./page/ScoutPage";
@@ -21,8 +22,9 @@ function App() {
         <Route path="/scout" element={<ScoutPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/otp" element={<OtpPage />} />
 
-               {/* erro Page */}
+               {/* error Page */}
           <Route path="*" element={<PageNotFound/>} /> 
         
       </Routes>

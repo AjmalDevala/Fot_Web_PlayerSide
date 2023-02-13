@@ -17,19 +17,16 @@ function SignUp() {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      const signupPromise = await axios.post('http://localhost:7007/api/userSignup',{values})
-        toast.promise(signupPromise,{
-          loading:'Creating...!🕐',
-          success:<b>Successfully created</b>,
-          error:<b>errror</b>
-        }).then(()=>{
-          navigate('/login')
- 
-        }).catch((error)=>{
-          toast.dismiss()
-          toast.error(error)
-        }     
-  )},
+      await axios.post('http://localhost:7007/api/sendOtp',{values}).then((res)=>{
+        toast.success('Registration successful')
+  
+        navigate("/otp" ,{replace:true})
+
+      }).catch((error)=>{
+        console.log(error)
+        toast.error(error.response.data.error)
+      })
+    },
   });
   return (
     // <!-- component -->
@@ -63,7 +60,7 @@ function SignUp() {
             <input
               {...Formik.getFieldProps('phone')}
 
-              type="phone"
+              type="tel"
               class="block w-full p-2 border rounded border-gray-300 focus:outline-none   required pattern=[6789][0-9]{9} focus:ring-1 focus:ring-gray-400 focus:border-transparent  "
               placeholder="Phone Number"
             />
@@ -85,7 +82,7 @@ function SignUp() {
             />
           </div>
         </form>
-        <a class="" href="/login" data-test="Link">
+        <a class=""  onClick={()=>{navigate("/login")}} data-test="Link">
           <span class="block  p-5 text-center text-gray-800  text-xs ">
             Already have an account?
           </span>

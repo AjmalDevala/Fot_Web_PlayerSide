@@ -1,6 +1,32 @@
-import React, { useState } from "react";
-
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import moment from 'moment'
 function Profile() {
+  const token = localStorage.getItem("token");
+  console.log(token);
+  const [user, setUser] = useState("");
+  const [userData, setUserData] = useState("");
+  useEffect(() => {
+    showProfile();
+  }, []);
+  const showProfile = async () => {
+    await axios
+      .get("http://localhost:7007/api/showProfile", {
+        headers: { Authorization: `Bearer ${token} ` },
+      })
+      .then((res) => {
+        toast.success("updation successful");
+        setUser(res.data.user);
+        setUserData(res.data.userData);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.error);
+      });
+  };
+  const Navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
     "/src/assets/images/Scout.jpg",
@@ -29,14 +55,24 @@ function Profile() {
             class="w-full h-full rounded-tl-lg rounded-tr-lg"
           />
         </div>
+         <div>
+         <button
+            onClick={() => {
+              Navigate("/editProfile");
+            }}
+            className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
+          >
+            EDIT profile
+          </button>
+         </div>
         <div class="flex flex-col items-center -mt-32">
           <img
-            src="./src/assets/images/Scout.jpg"
+            src={userData.profileUrl}
             alt="notget"
             class="w-40 border-4 border-white rounded-full"
           />
           <div class="flex items-center space-x-2 mt-2">
-            <p class="text-2xl">Akash</p>
+            <p class="text-2xl">{user.fullname}</p>
             <span class="bg-blue-500 rounded-full p-1" title="Verified">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -56,61 +92,77 @@ function Profile() {
           </div>
 
           <p class="text-gray-700">football player</p>
-          <p class="text-sm text-gray-500">India</p>
+          <p class="text-sm text-gray-500">{userData.nationality}</p>
         </div>
 
         <div class="my-4 flex flex-col 2xl:flex-row space-y-4 2xl:space-y-0 2xl:space-x-4">
-          <div class="w-full flex flex-col 2xl:w-1/3">
-            <div class="flex-1 bg-white rounded-lg shadow-xl p-8">
-              <h4 class="text-xl text-gray-900 font-bold">
+          <div class="w-full 2xl:w-1/3">
+              <h4 class="text-xl pl-6 text-gray-900 font-bold">
                 Player Personal Info
               </h4>
+            <div class=" bg-white rounded-lg shadow-xl p-8">
               <ul class="mt-2 text-gray-700">
-                <li class="flex border-y py-2">
+                <li class="flex justify-between border-y py-2">
                   <span class="font-bold w-24">Full name:</span>
-                  <span class="text-gray-700">Akash</span>
+                  <span class="text-gray-700 pl-1">{user.fullname}</span>
                 </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Birthday:</span>
-                  <span class="text-gray-700">24 Jul, 1991</span>
+                  <span class="text-gray-700">{moment(userData.dateOfBirth).format("YY/DD/MM")}</span>
                 </li>
-                <li class="flex border-b py-2">
-                  <span class="font-bold w-24">Joined:</span>
-                  <span class="text-gray-700">10 Jan 2022 (25 days ago)</span>
-                </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Mobile:</span>
-                  <span class="text-gray-700">(123) 123-1234</span>
+                  <span class="text-gray-700">{user.phone}</span>
                 </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Email:</span>
-                  <span class="text-gray-700">akash@example.com</span>
+                  <span class="text-gray-700">{user.email}</span>
                 </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Location:</span>
-                  <span class="text-gray-700">India</span>
+                  <span class="text-gray-700">{userData.nationality}</span>
                 </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Languages:</span>
-                  <span class="text-gray-700">English,hindi</span>
+                  <span class="text-gray-700">{userData.language}</span>
                 </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Age:</span>
-                  <span class="text-gray-700">24</span>
+                  <span class="text-gray-700">{userData.age}</span>
                 </li>
-                <li class="flex border-b py-2">
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">Address:</span>
+                  <span class="text-gray-700">{userData.address}</span>
+                </li>
+                <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">POSITION:</span>
-                  <span class="text-gray-700">GOAL KEEPER</span>
+                  <span class="text-gray-700 font-bold">{userData.position}</span>
                 </li>
-                <li class="flex border-b py-2">
-                  <span class="font-bold w-24">Languages:</span>
-                  <span class="text-gray-700">English,hindi</span>
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">Preferdfoot:</span>
+                  <span class="text-gray-700">{userData.foot}</span>
                 </li>
-                <li class="flex border-b py-2">
-                  <span class="font-bold w-24">Languages:</span>
-                  <span class="text-gray-700">English,hindi</span>
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">Height:</span>
+                  <span class="text-gray-700">{userData.height}</span>
                 </li>
-                <li class="flex items-center border-b py-2 space-x-2">
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">CurrentTeam: </span>
+                  <span class="text-gray-700">{userData.currentTeam}</span>
+                </li>
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">PreviousTeam:</span>
+                  <span class="text-gray-700">{userData.previousTeam}</span>
+                </li>
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">Awards:</span>
+                  <span class="text-gray-700">{userData.awards}</span>
+                </li>
+                <li class="flex justify-between border-b py-2">
+                  <span class="font-bold w-24">Joined:</span>
+                  <span class="text-gray-700">{moment(userData.joined).format("YY/DD/MM")}</span>
+                </li>
+                <li class="flex justify-between items-center border-b py-2 space-x-2">
                   <span class="font-bold w-24">Elsewhere:</span>
                   <a href="#" title="Facebook">
                     <svg

@@ -1,9 +1,9 @@
 import React from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import  {loginValidation} from "../../helper/validate";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { authenticate } from "../../redux/auth";
 function Login() {
@@ -26,6 +26,9 @@ function Login() {
         
       let { token } = res.data;
         localStorage.setItem('token', token);
+        // console.log(res.data);
+        localStorage.setItem('fullname',res.data.user.fullname)
+        localStorage.setItem('userId',res.data.user._id)
         dispatch(authenticate());
         navigate('/')
       }).catch((error)=>{

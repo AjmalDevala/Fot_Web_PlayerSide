@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -37,6 +37,7 @@ const Navbar = () => {
   const classNames = (...classes) => {
     return classes.filter(Boolean).join(" ");
   };
+  const name= localStorage.getItem("fullname");
   return (
     <Disclosure as="nav" className="bg-cyan-900">
       {({ open }) => (
@@ -57,7 +58,7 @@ const Navbar = () => {
               <div></div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <a className="text-white text-lg hover:translate-scale-y-50" onclick={()=>{navigate("/")}}>.FOT-WEB</a>
+                  <a className="text-white text-lg hover:translate-scale-y-50"  button onClick={()=>{navigate("/")}}>.FOT-WEB</a>
                   <img
                     className="block h-10 w-auto lg:hidden"
                     src="/src/assets/images/logo.png"
@@ -121,34 +122,57 @@ const Navbar = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
+
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    {name &&
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                           onclick={()=>{navigate("/profile")}}
+                          <Link to={"/profile"}
+                           
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
                             Your Profile
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
+                     }
+                      {name&& 
                       <Menu.Item>
                         {({ active }) => (
                           <a
                             href="#"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
-                            Settings
+                            {name}
                           </a>
                         )}
                       </Menu.Item>
+                      }
+                      {!name&& 
+                      <Menu.Item>
+                        {({ active }) => (
+                          <a 
+                          onClick={()=>{navigate("/login")}}
+
+                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                          >
+                            Login
+                          </a>
+                        )}
+                      </Menu.Item>
+                      }
+                      
+                     {name &&
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            onClick={() => navigate("/login")}
+                            onClick={() => {
+                              localStorage.clear();
+                              navigate("/")
+                            }}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
@@ -158,6 +182,7 @@ const Navbar = () => {
                           </a>
                         )}
                       </Menu.Item>
+                      }
                     </Menu.Items>
                   </Transition>
                 </Menu>

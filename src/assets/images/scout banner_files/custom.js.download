@@ -1,0 +1,144 @@
+$(document).ready(function(){
+
+    $("#menu-bar").click(function(){
+        $(".header-menu ul").slideToggle();
+    });
+
+    $(".home-slider").owlCarousel({
+        items : 1,
+        singleItem:true,
+        loop:true,
+        autoPlay:true,
+        navigation:true,
+        navigationText: ["<img src='front-end/img/nav_left.png'>","<img src='front-end/img/nav_right.png'>"]
+    });
+
+    $(".report-slider").owlCarousel ({
+        items : 1,
+        singleItem:true,
+        loop : true,
+        autoPlay : true
+    });
+
+    $(".testimonials-div .slider").owlCarousel ({
+        items : 1,
+        singleItem:true,
+        loop : true,
+        autoPlay : true
+    });
+
+    $("#login-input1").focus(function(){
+        $('.inputholder.one img').css("filter","grayscale(0)");
+    });
+    $("#login-input2").focus(function(){
+        $('.inputholder.two img').css("filter","grayscale(0)");
+    });
+    $(".inputholder input").blur(function(){
+        $('.inputholder img').css("filter","grayscale(100%)");
+    });
+
+});
+
+$(document).on('click','#log-in', function(e){
+    e.preventDefault();
+    if($(".check-form").valid()){
+        var btn = $(this);
+        btn.attr('disabled','disabled');
+        var initial_html = btn.html();
+        btn.html('Authenticating');
+        var form = $(this).parents("form:first");
+        var dataString = form.serialize();
+        var formAction = base_url + '/login';
+        $(".alert").addClass('hidden');
+        $.ajax({
+            type: "POST",
+            url : formAction,
+            data : dataString,
+            success : function(data){
+                data = JSON.parse(data);
+                if(data.success){
+                    location.href= base_url + '/dashboard';
+                } else {
+                    btn.html(initial_html);
+                    $(".alert-danger").html(data.message).removeClass('hidden');
+                }
+                btn.removeAttr('disabled');
+            }
+        },"json");
+    }
+});
+
+$(document).on('click','#register', function(e){
+    e.preventDefault();
+    if($(".check-form").valid()){
+        var btn = $(this);
+        btn.attr('disabled','disabled');
+        var initial_html = btn.html();
+        btn.html('Registering..');
+        var form = $(this).parents("form:first");
+        var dataString = form.serialize();
+        var formAction = base_url + '/register';
+        $(".alert").addClass('hidden');
+        $.ajax({
+            type: "POST",
+            url : formAction,
+            data : dataString,
+            success : function(data){
+                data = JSON.parse(data);
+                if(data.success){
+                    location.href= base_url + '/login?verify=true';
+                } else {
+                    btn.html(initial_html);
+                    $(".alert-danger").html(data.message).removeClass('hidden');
+                }
+                btn.removeAttr('disabled');
+            }
+        },"json");
+    }
+});
+
+$(document).on('click','#contact_us', function(e){
+    e.preventDefault();
+    if($(".check-form").valid()){
+        $(this).html('Processing');
+        $(this).attr('disabled','disabled');
+        $(".check-form").submit();
+    }
+});
+
+$(document).on('click','#recover', function(e){
+    e.preventDefault();
+    if($(".check-form").valid()){
+        var btn = $(this);
+        btn.attr('disabled','disabled');
+        var initial_html = btn.html();
+        btn.html('Recovering..');
+        var form = $(this).parents("form:first");
+        var dataString = form.serialize();
+        var formAction = base_url + '/recover-password';
+        $(".alert").addClass('hidden');
+        $.ajax({
+            type: "POST",
+            url : formAction,
+            data : dataString,
+            success : function(data){
+                data = JSON.parse(data);
+                if(data.success){
+                    $(".alert-success").html(data.message).removeClass('hidden');
+                } else {
+                    btn.html(initial_html);
+                    $(".alert-danger").html(data.message).removeClass('hidden');
+                }
+                btn.removeAttr('disabled');
+            }
+        },"json");
+    }
+});
+$('a.scroll-link').click(function (e) {
+    e.preventDefault();
+    $("html,body").animate({
+        scrollTop: $( $.attr(this, 'href') ).offset().top - 30
+    },800);
+
+    return false;
+});

@@ -46,6 +46,8 @@ function Profile() {
       currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1
     );
   }
+
+
   return (
     <div class="h-full bg-gray-200 p-8">
       <div class="bg-white rounded-lg shadow-xl pb-8">
@@ -67,12 +69,12 @@ function Profile() {
          </div>
         <div class="flex flex-col items-center -mt-32">
           <img
-            src={userData.profileUrl}
+            src={userData?.profileUrl}
             alt="notget"
             class="w-40 border-4 border-white rounded-full"
           />
           <div class="flex items-center space-x-2 mt-2">
-            <p class="text-2xl">{user.fullname}</p>
+            <p class="text-2xl">{user?.fullname}</p>
             <span class="bg-blue-500 rounded-full p-1" title="Verified">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +94,7 @@ function Profile() {
           </div>
 
           <p class="text-gray-700">football player</p>
-          <p class="text-sm text-gray-500">{userData.nationality}</p>
+          <p class="text-sm text-gray-500">{userData?.nationality}</p>
         </div>
 
         <div class="my-4 flex flex-col 2xl:flex-row space-y-4 2xl:space-y-0 2xl:space-x-4">
@@ -104,63 +106,63 @@ function Profile() {
               <ul class="mt-2 text-gray-700">
                 <li class="flex justify-between border-y py-2">
                   <span class="font-bold w-24">Full name:</span>
-                  <span class="text-gray-700 pl-1">{user.fullname}</span>
+                  <span class="text-gray-700 pl-1">{user?.fullname}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Birthday:</span>
-                  <span class="text-gray-700">{moment(userData.dateOfBirth).format("YY/DD/MM")}</span>
+                  <span class="text-gray-700">{moment(userData?.dateOfBirth).format("YY/DD/MM")}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Mobile:</span>
-                  <span class="text-gray-700">{user.phone}</span>
+                  <span class="text-gray-700">{user?.phone}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Email:</span>
-                  <span class="text-gray-700">{user.email}</span>
+                  <span class="text-gray-700">{user?.email}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Location:</span>
-                  <span class="text-gray-700">{userData.nationality}</span>
+                  <span class="text-gray-700">{userData?.nationality}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Languages:</span>
-                  <span class="text-gray-700">{userData.language}</span>
+                  <span class="text-gray-700">{userData?.language}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Age:</span>
-                  <span class="text-gray-700">{userData.age}</span>
+                  <span class="text-gray-700">{userData?.age}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Address:</span>
-                  <span class="text-gray-700">{userData.address}</span>
+                  <span class="text-gray-700">{userData?.address}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">POSITION:</span>
-                  <span class="text-gray-700 font-bold">{userData.position}</span>
+                  <span class="text-gray-700 font-bold">{userData?.position}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Preferdfoot:</span>
-                  <span class="text-gray-700">{userData.foot}</span>
+                  <span class="text-gray-700">{userData?.foot}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Height:</span>
-                  <span class="text-gray-700">{userData.height}</span>
+                  <span class="text-gray-700">{userData?.height}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">CurrentTeam: </span>
-                  <span class="text-gray-700">{userData.currentTeam}</span>
+                  <span class="text-gray-700">{userData?.currentTeam}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">PreviousTeam:</span>
-                  <span class="text-gray-700">{userData.previousTeam}</span>
+                  <span class="text-gray-700">{userData?.previousTeam}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Awards:</span>
-                  <span class="text-gray-700">{userData.awards}</span>
+                  <span class="text-gray-700">{userData?.awards}</span>
                 </li>
                 <li class="flex justify-between border-b py-2">
                   <span class="font-bold w-24">Joined:</span>
-                  <span class="text-gray-700">{moment(userData.joined).format("YY/DD/MM")}</span>
+                  <span class="text-gray-700">{moment(userData?.joined).format("YY/DD/MM")}</span>
                 </li>
                 <li class="flex justify-between items-center border-b py-2 space-x-2">
                   <span class="font-bold w-24">Elsewhere:</span>

@@ -1,6 +1,29 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 function Scout() {
+  const [search, setSearch] = useState("");
+  const searchData = (scout) => {
+    return search === ""
+      ? scout
+      : scout.scoutId.fullname.toLowerCase().includes(search) ||
+          scout.currentClub.toLowerCase().includes(search);
+  };
+  const [scout, setScout] = useState([]);
+  useEffect(() => {
+    axios.get("http://localhost:7007/api/admin/allScout").then((response) => {
+      console.log(response.data, "0987654dyuio");
+      setScout(response.data.scout);
+    });
+  }, []);
+  const Connect = (id)=>{
+    const playerId = localStorage.getItem("userId");
+     axios.post(`http://localhost:7007/api/connectScout?playerId=${playerId}&scoutId=${id}`).then((response)=>{
+      console.log("happy")
+      toast.response.data
+     })
+  }
   return (
     <div>
       <link
@@ -8,22 +31,18 @@ function Scout() {
         href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css"
       />
 
-      {/* <!-- Page Container --> */}
-      <div class="flex items-center justify-center min-h-screen bg-white ">
-        <div class="flex flex-col">
-          <div class="flex flex-col mt-8">
-            {/* <!-- Meet the Team --> */}
-            <div class="container max-w-7xl px-4">
-              {/* <!-- Section Header --> */}
-              <div class="flex flex-wrap justify-center text-center mb-24">
-                <div class="w-full lg:w-6/12 px-4">
-                  {/* <!-- Header --> */}
-                  <h1 class="text-gray-900 text-4xl font-bold mb-8">
+      <div className="flex items-center justify-center min-h-screen bg-white ">
+        <div className="flex flex-col">
+          <div className="flex flex-col mt-6">
+            <div className="container max-w-7xl px-4">
+              <div className="flex flex-wrap justify-center text-center mb-24">
+                <div className="w-full lg:w-6/12 px-4">
+                  <h1 className="text-gray-900 text-4xl font-bold mb-8">
                     Meet the Scout
                   </h1>
 
                   {/* <!-- Description --> */}
-                  <p class="text-gray-700 text-lg font-light">
+                  <p className="text-gray-700 text-lg font-light">
                     A player scout typically attends as many football matches as
                     possible to evaluate targets first hand. Scouts who wish to
                     identify promising young players typically attend
@@ -32,193 +51,74 @@ function Scout() {
                   <p className="text-center text-bold">Connect and Message!</p>
                 </div>
               </div>
+            </div>
 
-              {/* <!-- Team Members --> */}
-              <div class="flex flex-wrap">
-                {/* <!-- Member #1 --> */}
-                <div class="w-full md:w-6/12 lg:w-3/12 mb-6 px-6 sm:px-6 lg:px-4">
-                  <div class="flex flex-col">
-                    {/* <!-- Avatar --> */}
-                    <a href="#" class="mx-auto">
-                      <img
-                        class="rounded-2xl w-72 h-72 drop-shadow-md hover:drop-shadow-xl transition-all duration-200 delay-100"
-                        src="/src/assets/images/Scout.jpg"
-                      />
-                    </a>
-
-                    {/* <!-- Details --> */}
-                    <div class="text-center mt-6">
-                      {/* <!-- Name --> */}
-                      <h1 class="text-gray-900 text-xl font-bold mb-1">
-                        Tranter Jaskulski
-                      </h1>
-
-                      {/* <!-- Title --> */}
-                      <div class="text-cyan-500 font-extrabold mb-2">Scout</div>
-
-                      {/* <!-- Social Icons --> */}
-                      <div
-                        class=" items-center justify-center opacity-50 
-                                transition-opacity duration-300"> 
-                                
-                    <p class="text-base text-body-color leading-loose ">
-                     Nationality   : <span className="text-orange-500">india</span>
-                  </p>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     Age  : <span className="text-orange-500">56</span>
-                  </p>
-                   </div>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     current Team : <span className="text-orange-500">DT PLAYER</span>
-                  </p>
-                   </div>
-                      </div>
-                    <button class="mx-auto lg:mx-0 hover:none bg-sky-400/70 text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-                      Connect!
-                    </button>
-                    
-                    </div>
-                  </div>
+            <div className="flex justify-center">
+              <form className="w-full max-w-md ">
+                <div className="flex items-center border-b-2 border-teal-500 py-2">
+                  <input
+                    className="appearance-none bg-transparent border-none w-full text-black mr-3 py-1 px-2 leading-tight focus:outline-none"
+                    onChange={(e) => {
+                      let searchValue = e.target.value.toLocaleLowerCase();
+                      setSearch(searchValue);
+                    }}
+                    type="text"
+                    placeholder="Search..."
+                    aria-label="Search"
+                  />
+                  <button
+                    className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+                    type="button"
+                  >
+                    Search
+                  </button>
                 </div>
-                <div class="w-full md:w-6/12 lg:w-3/12 mb-6 px-6 sm:px-6 lg:px-4">
-                  <div class="flex flex-col">
-                    {/* <!-- Avatar --> */}
-                    <a href="#" class="mx-auto">
-                      <img
-                        class="rounded-2xl w-72 h-72 drop-shadow-md hover:drop-shadow-xl transition-all duration-200 delay-100"
-                        src="/src/assets/images/Scout.jpg"
-                      />
-                    </a>
+              </form>
+            </div>
 
-                    {/* <!-- Details --> */}
-                    <div class="text-center mt-6">
-                      {/* <!-- Name --> */}
-                      <h1 class="text-gray-900 text-xl font-bold mb-1">
-                        Tranter Jaskulski
-                      </h1>
-
-                      {/* <!-- Title --> */}
-                      <div class="text-cyan-500 font-extrabold mb-2">Scout</div>
-
-                      {/* <!-- Social Icons --> */}
-                      <div
-                        class=" items-center justify-center opacity-50 
-                                transition-opacity duration-300"> 
-                                
-                    <p class="text-base text-body-color leading-loose ">
-                     Nationality   : <span className="text-orange-500">india</span>
-                  </p>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     Age  : <span className="text-orange-500">56</span>
-                  </p>
-                   </div>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     current Team : <span className="text-orange-500">DT PLAYER</span>
-                  </p>
-                   </div>
+            <div className="bg-white">
+              <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+                <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                  {scout.filter(searchData).map((scout) => (
+                    <div key={scout?.id} className="group relative">
+                      <div className="min-h-80  aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-80 lg:aspect-none lg:h-80">
+                        <img
+                          src={scout?.profileUrl}
+                          alt="add"
+                          className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                        />
                       </div>
-                    <button class="mx-auto lg:mx-0 hover:none bg-sky-400/70 text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-                      Connect!
-                    </button>
-                    
-                    </div>
-                  </div>
-                </div>
-                <div class="w-full md:w-6/12 lg:w-3/12 mb-6 px-6 sm:px-6 lg:px-4">
-                  <div class="flex flex-col">
-                    {/* <!-- Avatar --> */}
-                    <a href="#" class="mx-auto">
-                      <img
-                        class="rounded-2xl w-72 h-72 drop-shadow-md hover:drop-shadow-xl transition-all duration-200 delay-100"
-                        src="/src/assets/images/Scout.jpg"
-                      />
-                    </a>
-
-                    {/* <!-- Details --> */}
-                    <div class="text-center mt-6">
-                      {/* <!-- Name --> */}
-                      <h1 class="text-gray-900 text-xl font-bold mb-1">
-                        Tranter Jaskulski
-                      </h1>
-
-                      {/* <!-- Title --> */}
-                      <div class="text-cyan-500 font-extrabold mb-2">Scout</div>
-
-                      {/* <!-- Social Icons --> */}
-                      <div
-                        class=" items-center justify-center opacity-50 
-                                transition-opacity duration-300"> 
-                                
-                    <p class="text-base text-body-color leading-loose ">
-                     Nationality   : <span className="text-orange-500">india</span>
-                  </p>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     Age  : <span className="text-orange-500">56</span>
-                  </p>
-                   </div>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     current Team : <span className="text-orange-500">DT PLAYER</span>
-                  </p>
-                   </div>
+                      <p className="mt-1 text-xl text-blue-600 flex justify-center">
+                        {scout?.position}
+                      </p>
+                      <div className="mt-4 flex justify-between">
+                        <div>
+                          <h3 className="text-lg text-bold text-">
+                            {scout?.scoutId.fullname}
+                          </h3>
+                          <div className="flex">
+                            <h4 className="text-justify font-bold text-neutral-900">Age:</h4>
+                            <span className="ml-1">{scout?.age}</span>
+                          </div>
+                          <div className="flex">
+                            <h4 className="text-base font-bold text-neutral-900">Experience:</h4>
+                            <span className="ml-2 font-bold text-teal-500">{scout?.experience} years</span>
+                          </div>
+                        </div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {scout?.nationality}
+                        </p>
                       </div>
-                    <button class="mx-auto lg:mx-0 hover:none bg-sky-400/70 text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-                      Connect!
-                    </button>
-                    
-                    </div>
-                  </div>
-                </div>
-                <div class="w-full md:w-6/12 lg:w-3/12 mb-6 px-6 sm:px-6 lg:px-4">
-                  <div class="flex flex-col">
-                    {/* <!-- Avatar --> */}
-                    <a href="#" class="mx-auto">
-                      <img
-                        class="rounded-2xl w-72 h-72 drop-shadow-md hover:drop-shadow-xl transition-all duration-200 delay-100"
-                        src="/src/assets/images/Scout.jpg"
-                      />
-                    </a>
-
-                    {/* <!-- Details --> */}
-                    <div class="text-center mt-6">
-                      {/* <!-- Name --> */}
-                      <h1 class="text-gray-900 text-xl font-bold mb-1">
-                        Tranter Jaskulski
-                      </h1>
-
-                      {/* <!-- Title --> */}
-                      <div class="text-cyan-500 font-extrabold mb-2">Scout</div>
-
-                      {/* <!-- Social Icons --> */}
-                      <div
-                        class=" items-center justify-center opacity-50 
-                                transition-opacity duration-300"> 
-                                
-                    <p class="text-base text-body-color leading-loose ">
-                     Nationality   : <span className="text-orange-500">india</span>
-                  </p>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     Age  : <span className="text-orange-500">56</span>
-                  </p>
-                   </div>
-                   <div>
-                    <p class="text-base text-body-color leading-loose ">
-                     current Team : <span className="text-orange-500">DT PLAYER</span>
-                  </p>
-                   </div>
+                      <p className="text-sm flex justify-center  font-bold text-blue-600 ">
+                        {scout?.currentClub}
+                      </p>
+                      <div className="flex justify-center">
+                        <button  onClick={()=>Connect(scout.scoutId._id)} class="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+                          Connect!
+                        </button>
                       </div>
-                    <button class="mx-auto lg:mx-0 hover:none bg-sky-400/70 text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-                      Connect!
-                    </button>
-                    
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

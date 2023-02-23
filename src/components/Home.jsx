@@ -75,6 +75,7 @@ function Home() {
         </div>
       ) : (
         <>
+        
           {/* <div>{name}</div> */}
 
           <div className="relative w-full h-96 overflow-hidden bg-gray-900">

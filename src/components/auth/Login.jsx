@@ -26,7 +26,6 @@ function Login() {
         
       let { token } = res.data;
         localStorage.setItem('token', token);
-        // console.log(res.data);
         localStorage.setItem('fullname',res.data.user.fullname)
         localStorage.setItem('userId',res.data.user._id)
         dispatch(authenticate());

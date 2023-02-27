@@ -3,11 +3,11 @@ import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useSelector } from 'react-redux'
 
-function editModal() {
+function showModel() {
   const [open, setOpen] = useState(true)
   const cancelButtonRef = useRef(null)
 
-  const show = useSelector((state) => state.editProfile.show)
+  const show = useSelector((state) => state.showModel.show)
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -79,5 +79,5 @@ function editModal() {
     </Transition.Root>
   )
 }
-export default editModal
+export default showModel
 

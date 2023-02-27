@@ -19,7 +19,7 @@ function SignUp() {
     onSubmit: async (values) => {
       await axios.post('http://localhost:7007/api/sendOtp',{values}).then((res)=>{
         toast.success('Registration successful')
-  
+       
         navigate("/otp" ,{replace:true})
 
       }).catch((error)=>{

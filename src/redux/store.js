@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth"
-import editPlayerModal from "./editPlayerModal";
+import showScoutModal from "./showScoutModal";
 
 export default configureStore({
     reducer:{
         auth: authReducer,
-        editProfile: editPlayerModal
+        showScout: showScoutModal
     }
 })

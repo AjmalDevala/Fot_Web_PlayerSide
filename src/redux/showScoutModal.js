@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const editPlayerModal = createSlice({
-    name:"editProfile",
+export const showScoutModal = createSlice({
+    name:"showScout",
     initialState:{
         show:false,
     },
@@ -15,5 +15,5 @@ export const editPlayerModal = createSlice({
     }
 })
 
-export const {switchOn, switchOff} = editPlayerModal.actions;
-export default editPlayerModal.reducer;
+export const {switchOn, switchOff} = showScoutModal.actions;
+export default showScoutModal.reducer;

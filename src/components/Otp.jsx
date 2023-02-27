@@ -49,7 +49,7 @@ const resendOtp = ()=>{
   return (
    
    <div className="h-screen bg-[url('/src/assets/images/playerlogin.jpg')] pt-44">
-
+        <Toaster position="top-center"></Toaster>
         <form action={verifyOtp}>
         <div className="flex h-full  w-full items-center justify-center container mx-auto px-8">
           <div className="max-w-2xl text-center">

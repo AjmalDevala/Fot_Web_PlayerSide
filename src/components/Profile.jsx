@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { useDispatch } from "react-redux";
+
 function Profile() {
+  const [userPrime,setUserPrime] = useState(false)
   const token = localStorage.getItem("token");
-  console.log(token);
   const [user, setUser] = useState("");
   const [userData, setUserData] = useState("");
   useEffect(() => {
@@ -21,6 +21,7 @@ function Profile() {
         toast.success("updation successful");
         setUser(res.data.user);
         setUserData(res.data.userData);
+        setUserPrime(res.data.user.premium)
       })
       .catch((error) => {
         console.log(error);
@@ -48,11 +49,10 @@ function Profile() {
     );
   }
 
-  const dispatch = useDispatch();
 
   return (
     <>
-      <editModal/>
+      
       <div class="h-full bg-gray-200 p-8">
         <div class="bg-white rounded-lg shadow-xl pb-8">
           <div class="w-full h-[250px]">
@@ -69,16 +69,17 @@ function Profile() {
               className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
             >
               EDIT profile
-            </button>
+             </button>
           </div>
           <div class="flex flex-col items-center -mt-32">
             <img
               src={userData?.profileUrl}
               alt="notget"
-              class="w-40 border-4 border-white  rounded-full"
+              class="w-40 border-4 border-white  object-fill"
             />
             <div class="flex items-center space-x-2 mt-2">
               <p class="text-2xl">{user?.fullname}</p>
+              { userPrime !=false && (
               <span class="bg-blue-500 rounded-full p-1" title="Verified">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -95,6 +96,7 @@ function Profile() {
                   ></path>
                 </svg>
               </span>
+              )}
             </div>
 
             <p class="text-gray-700">football player</p>
@@ -115,7 +117,7 @@ function Profile() {
                   <li class="flex justify-between border-b py-2">
                     <span class="font-bold w-24">Birthday:</span>
                     <span class="text-gray-700">
-                      {moment(userData?.dateOfBirth).format("YY/DD/MM")}
+                      {moment(userData?.dateOfBirth).format("YYYY/DD/MM")}
                     </span>
                   </li>
                   <li class="flex justify-between border-b py-2">

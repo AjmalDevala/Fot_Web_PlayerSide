@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import EditProfile from "./components/EditProfile";
+import SinglePage from "./components/SinglePage";
 import PageNotFound from "./error/PageNotFound";
 import ChatPage from "./page/ChatPage";
 import Home from "./page/HomePage";
@@ -25,6 +26,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/editProfile" element={<EditProfile />} />
+        <Route path="/singlePage" element={<SinglePage />} />
 
                {/* error Page */}
           <Route path="*" element={<PageNotFound/>} /> 

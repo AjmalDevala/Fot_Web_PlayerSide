@@ -21,7 +21,7 @@ const EditProfile = () => {
         setUser(res.data.user);
         setFullName(res.data.user.fullname);
         setEmail(res.data.user.email);
-        setPhone(res.data.user.phone)
+        setPhone(res.data.user.phone);
         setUserData(res.data.userData);
         setProfileUrl(res.data.userData.profileUrl);
         setPosition(res.data.userData.position);
@@ -42,6 +42,8 @@ const EditProfile = () => {
         toast.error(error.response.data.error);
       });
   };
+
+ 
 
   //ceating and updating
 
@@ -64,9 +66,9 @@ const EditProfile = () => {
   const [user, setUser] = useState("");
   const [userData, setUserData] = useState({});
   const token = localStorage.getItem("token");
-  const [fullname,setFullName]=useState('')
-  const [email,setEmail]=useState('')
-  const [phone,setPhone]=useState('')
+  const [fullname, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -135,11 +137,13 @@ const EditProfile = () => {
           headers: { Authorization: `Bearer ${token} ` },
         }
       )
-      .then((res)=>{
-       const {msg}=(res.data)
-       toast.success(msg) 
-      })
+      .then((res) => {
+        const { msg } = res.data;
+        toast.success(msg);
+      });
   };
+
+  console.log(dateOfBirth,'topppppppppppppppppp')
   return (
     <div>
       <>
@@ -216,26 +220,48 @@ const EditProfile = () => {
                   <option>Central Midfielder</option>
                   <option>Full-back</option>
                   <option>Goalkeeper</option>
-                  <option>Centre-backs</option>
                 </select>
               </div>
-              <div>
-                <label
-                  className="text-white dark:text-gray-200"
-                  for="passwordConfirmation"
-                >
-                  Date of birth
-                </label>
-                <input
-                  value={dateOfBirth}
-                  onChange={(e) => {
-                    setDataofbirth(e.target.value);
-                  }}
-                  id=""
-                  type="text"
-                  className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                />
-              </div>
+
+              {dateOfBirth.length >1 ? (
+                
+                <div>
+                  <label
+                    className="text-white dark:text-gray-200"
+                    htmlFor="passwordConfirmation"
+                  >
+                    Date of birth
+                  </label>
+                  <input
+                    value={dateOfBirth}
+                    onChange={(e) => {
+                      setDataofbirth(e.target.value);
+                    }}
+                    id=""
+                    type="text"
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label
+                    className="text-white dark:text-gray-200"
+                    htmlFor="passwordConfirmation"
+                  >
+                    Date of birth
+                  </label>
+                  <input
+                    value={dateOfBirth}
+                    onChange={(e) => {
+                      setDataofbirth(e.target.value);
+                    }}
+                    id=""
+                    type="date"
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                  />
+                </div>
+              )}
+
               <div>
                 <label
                   className="text-white dark:text-gray-200"
@@ -471,12 +497,12 @@ const EditProfile = () => {
                 >
                   phone number
                 </label>
-                
+
                 <input
-                value={phone}
-                onChange ={(e)=>{
-                  setPhone(e.target.value);
-                }}
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                  }}
                   type="tel"
                   className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                 />

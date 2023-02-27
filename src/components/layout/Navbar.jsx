@@ -1,43 +1,52 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon,CheckCircleIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const navigate = useNavigate();
-
   const home = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     navigate("/");
   };
   const Profile = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     navigate("/profile");
   };
   const Scout = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     navigate("/scout");
   };
   const Chat = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     navigate("/chat");
   };
-  const pricing = (e) => {
-    e.preventDefault()
-    navigate("/pricing");
-  };
+
+  // const navigation = [
+  //   { name: "Home", onclick: home, current: false },
+  //   { name: "Profile", onclick: Profile, current: false },
+  //   { name: "Scout", onclick: Scout, current: false },
+  //   { name: "Chat", onclick: Chat, current: false },
+  //   {premium == false &&
+  //   { name: "Pricing", onclick: pricing, current: false },
+  //   }
+  // ];
 
   const navigation = [
     { name: "Home", onclick: home, current: false },
     { name: "Profile", onclick: Profile, current: false },
     { name: "Scout", onclick: Scout, current: false },
-    { name: "Chat", onclick: Chat, current: false },
-    { name: "Pricing", onclick: pricing, current: false }
+    { name: "Chat", onclick: Chat, current: false }
   ];
+
+  
+ 
   const classNames = (...classes) => {
     return classes.filter(Boolean).join(" ");
   };
-  const name= localStorage.getItem("fullname");
+  const name = localStorage.getItem("fullname");  
   return (
     <Disclosure as="nav" className="bg-cyan-900">
       {({ open }) => (
@@ -58,7 +67,15 @@ const Navbar = () => {
               <div></div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <a className="text-white text-lg hover:translate-scale-y-50"  button onClick={()=>{navigate("/")}}>.FOT-WEB</a>
+                  <a
+                    className="text-white text-lg hover:translate-scale-y-50"
+                    button
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                  >
+                    .FOT-WEB
+                  </a>
                   <img
                     className="block h-10 w-auto lg:hidden"
                     src="/src/assets/images/logo.png"
@@ -75,8 +92,8 @@ const Navbar = () => {
                     {navigation.map((item) => (
                       <button
                         key={item.name}
-                        onClick ={(e)=> {
-                          item.onclick(e)
+                        onClick={(e) => {
+                          item.onclick(e);
                         }}
                         className={classNames(
                           item.current
@@ -122,67 +139,72 @@ const Navbar = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    {name &&
-                      <Menu.Item>
-                        {({ active }) => (
-                          <Link to={"/profile"}
-                           
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Your Profile
-                          </Link>
-                        )}
-                      </Menu.Item>
-                     }
-                      {name&& 
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            {name}
-                          </a>
-                        )}
-                      </Menu.Item>
-                      }
-                      {!name&& 
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a 
-                          onClick={()=>{navigate("/login")}}
+                      {name && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              to={"/profile"}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Your Profile
+                            </Link>
+                          )}
+                        </Menu.Item>
+                      )}
+                      {name && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <button
+                              onClick={()=>{navigate('/profile')}}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm font-bold text-gray-700"
+                              )}
+                            > {name} 
+                            </button>
+                          )}
+                        </Menu.Item>
+                      )}
+                      {!name && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              onClick={() => {
+                                navigate("/login");
+                              }}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Login
+                            </a>
+                          )}
+                        </Menu.Item>
+                      )}
 
-                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            Login
-                          </a>
-                        )}
-                      </Menu.Item>
-                      }
-                      
-                     {name &&
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            onClick={() => {
-                              localStorage.clear();
-                              navigate("/")
-                            }}
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </Menu.Item>
-                      }
+                      {name && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              onClick={() => {
+                                localStorage.clear();
+                                navigate("/");
+                              }}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Sign out
+                            </a>
+                          )}
+                        </Menu.Item>
+                      )}
                     </Menu.Items>
                   </Transition>
                 </Menu>

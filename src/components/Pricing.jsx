@@ -54,7 +54,7 @@ function Pricing() {
                   Free
                 </div>
                 <ul className="w-full text-center text-xl">
-                  <li className="border-b py-4">ONLY 3 CONNECTION</li>
+                  <li className="border-b py-4">ONLY 2 CONNECTION</li>
                   <li className="border-b py-4">ONLY ONE DAY MESSAGE </li>
                   {/* <li className="border-b py-4">Thing</li> */}
                 </ul>

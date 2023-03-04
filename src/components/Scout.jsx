@@ -2,18 +2,26 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { Link, Navigate } from "react-router-dom";
 import ShowScoutModal from "../redux/showScoutModal";
+import { Link, useNavigate } from "react-router-dom";
+
 function Scout() {
+  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const [search, setSearch] = useState("");
   const [user, setUser] = useState(false);
+  const [change, setChange] = useState(false);
+  const [tempScout, setTempScout] = useState([]);
+  const [connectedScout, setConnectedScout] = useState([]);
 
   const searchData = (scout) => {
     return search === ""
       ? scout
       : scout.scoutId.fullname.toLowerCase().includes(search) ||
-          scout.currentClub.toLowerCase().includes(search);
+          scout.currentClub.toLowerCase().includes(search) ||
+          scout.nationality.toLowerCase().includes(search)||
+          scout.experience.toString().includes(search.toLowerCase());
+
   };
   const [scout, setScout] = useState([]);
   useEffect(() => {
@@ -21,24 +29,49 @@ function Scout() {
       .get(`http://localhost:7007/api/admin/allScout?userId=${userId}`)
       .then((response) => {
         setScout(response.data.scout);
+        setTempScout(response.data.scout);
         setUser(response.data.user[0].premium);
+        connected();
       });
-  }, []);
+  }, [change]);
+
+  const connected = () => {
+    axios
+      .get(
+        `http://localhost:7007/api/admin//connectedScoutCheck?userId=${userId}`
+      )
+      .then((response) => {
+        setConnectedScout(response.data.connectedScout);
+      });
+  };
 
   const Connect = (id) => {
+    change === true ? setChange(false) : setChange(true);
     const userId = localStorage.getItem("userId");
     axios
       .post(
         `http://localhost:7007/api/connectScout?userId=${userId}&scoutId=${id}`
       )
       .then((response) => {
-        toast.success(response.data.msg)
-        SetWaiting(response.data.waiting)
+        toast.success(response.data.msg);
+        SetWaiting(response.data.waiting);
         console.log(SetWaiting);
       })
       .catch((error) => {
         toast.error(error.response.data.error);
       });
+  };
+  const filterByExperience = (experience) => {
+    let filtered = scout.filter((data) => data.experience > experience );
+    setTempScout(filtered);
+  };
+  const filterByCountry = (india) => {
+    let filtered = scout.filter((data) => data.nationality.length< india );
+    setTempScout(filtered);
+  };
+
+  const all = () => {
+    setTempScout(scout);
   };
   return (
     <div>
@@ -53,9 +86,9 @@ function Scout() {
         <div className="flex flex-col">
           <div className="flex flex-col mt-6">
             <div className="container max-w-7xl px-4">
-              <div className="flex flex-wrap justify-center text-center mb-24">
+              <div className="flex flex-wrap justify-center text-center mb-8">
                 <div className="w-full lg:w-6/12 px-4">
-                  <h1 className="text-gray-900 text-4xl font-bold mb-8">
+                  <h1 className="text-gray-900 text-4xl font-bold ">
                     Meet the Scout
                   </h1>
 
@@ -70,35 +103,59 @@ function Scout() {
                 </div>
               </div>
             </div>
-
-            <div className="flex justify-center">
-              <form className="w-full max-w-md ">
-                <div className="flex items-center border-b-2 border-teal-500 py-2">
-                  <input
-                    className="appearance-none bg-transparent border-none w-full text-black mr-3 py-1 px-2 leading-tight focus:outline-none"
-                    onChange={(e) => {
-                      let searchValue = e.target.value.toLocaleLowerCase();
-                      setSearch(searchValue);
-                    }}
-                    type="text"
-                    placeholder="Search..."
-                    aria-label="Search"
-                  />
-                  <button
-                    className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-                    type="button"
-                  >
-                    Search
-                  </button>
+            {user && (
+              <>
+                <div className="flex justify-center">
+                  <form className="w-full max-w-md ">
+                    <div className="flex items-center border-b-2 border-teal-500 py-2">
+                      <input
+                        className="appearance-none bg-transparent border-none w-full text-black mr-3 py-1 px-2 leading-tight focus:outline-none"
+                        onChange={(e) => {
+                          let searchValue = e.target.value.toLocaleLowerCase();
+                          setSearch(searchValue);
+                        }}
+                        type="text"
+                        placeholder="Search..."
+                        aria-label="Search"
+                      />
+                      <button
+                        className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+                        type="button"
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </div>
+                <div className="flex justify-center space-x-4">
+                  <button
+                    onClick={() =>all()}
+                    className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
+                  >
+                    All Scout
+                  </button>
+                  <button
+                    onClick={() => filterByExperience(4)}
+                    className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
+                  >
+                    High experience
+                  </button>
+                  <button
+                    onClick={() => filterByCountry("india")}
+                    className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
+                  >
+                    Other Country
+                  </button>
+                 
+                </div>
+              </>
+            )}
 
             <div className="bg-white">
               <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                 {user ? (
-                  <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                    {scout.filter(searchData).map((scout) => (
+                  <div className="mt-1 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                    {tempScout.filter(searchData).map((scout) => (
                       <div key={scout?.id} className="group relative">
                         <Link to={"/singlePage"} state={scout.scoutId._id}>
                           <div className="min-h-80  aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-80 lg:aspect-none lg:h-80">
@@ -140,12 +197,21 @@ function Scout() {
                           {scout?.currentClub}
                         </p>
                         <div className="flex justify-center">
-                          <button
-                            onClick={() => Connect(scout.scoutId._id)}
-                            className="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                          >
-                            Connect!
-                          </button>
+                          {connectedScout.includes(scout.scoutId._id) ? (
+                            <button
+                              onClick={() => navigate("/chat")}
+                              className="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                            >
+                              Message
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => Connect(scout.scoutId._id)}
+                              className="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                            >
+                              Connect!
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -197,12 +263,21 @@ function Scout() {
                             {scout?.currentClub}
                           </p>
                           <div className="flex justify-center">
-                            <button
-                              onClick={() => Connect(scout.scoutId._id)}
-                              class="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-                            >
-                              Connect!
-                            </button>
+                            {connectedScout.includes(scout.scoutId._id) ? (
+                              <button
+                                onClick={() => navigate("/chat")}
+                                className="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                              >
+                                Message
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => Connect(player.userId._id)}
+                                className="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                              >
+                                Connect!
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}

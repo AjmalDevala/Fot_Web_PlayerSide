@@ -3,29 +3,37 @@ import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
-import  {siginupValidation} from "../../helper/validate";
+import { siginupValidation } from "../../helper/validate";
 function SignUp() {
   const navigate = useNavigate();
   const Formik = useFormik({
     initialValues: {
       fullname: "",
       email: "",
-      phone:"",
+      phone: "",
       password: "",
     },
-    validate :siginupValidation,
+    validate: siginupValidation,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      await axios.post('http://localhost:7007/api/sendOtp',{values}).then((res)=>{
-        toast.success('Registration successful')
-       
-        navigate("/otp" ,{replace:true})
+      
+      toast.loading("We are processing your request...");
+      setTimeout(function () {
+        toast.dismiss();
+      }, 30000);
 
-      }).catch((error)=>{
-        console.log(error)
-        toast.error(error.response.data.error)
-      })
+      await axios
+        .post("http://localhost:7007/api/sendOtp", { values })
+        .then((res) => {
+         
+          navigate("/otp", { replace: true });
+      
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.error);
+        });
     },
   });
   return (
@@ -42,7 +50,7 @@ function SignUp() {
         <form action="#" class="p-0" onSubmit={Formik.handleSubmit}>
           <div class="mt-5">
             <input
-            {...Formik.getFieldProps('fullname')}
+              {...Formik.getFieldProps("fullname")}
               type="text"
               class="block w-full p-2 border rounded border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent "
               placeholder="fullname"
@@ -50,7 +58,7 @@ function SignUp() {
           </div>
           <div class="mt-5">
             <input
-            {...Formik.getFieldProps('email')}
+              {...Formik.getFieldProps("email")}
               type="email"
               class="block w-full p-2 border rounded border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent "
               placeholder="Email"
@@ -58,8 +66,7 @@ function SignUp() {
           </div>
           <div class="mt-5">
             <input
-              {...Formik.getFieldProps('phone')}
-
+              {...Formik.getFieldProps("phone")}
               type="tel"
               class="block w-full p-2 border rounded border-gray-300 focus:outline-none   required pattern=[6789][0-9]{9} focus:ring-1 focus:ring-gray-400 focus:border-transparent  "
               placeholder="Phone Number"
@@ -67,7 +74,7 @@ function SignUp() {
           </div>
           <div class="mt-5">
             <input
-            {...Formik.getFieldProps('password')}
+              {...Formik.getFieldProps("password")}
               type="password"
               class="block w-full p-2 border rounded border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent  "
               placeholder="Password"
@@ -82,13 +89,19 @@ function SignUp() {
             />
           </div>
         </form>
-        <a class=""  onClick={()=>{navigate("/login")}} data-test="Link">
+        <a
+          class=""
+          onClick={() => {
+            navigate("/login");
+          }}
+          data-test="Link"
+        >
           <span class="block  p-5 text-center text-gray-800  text-xs ">
             Already have an account?
           </span>
         </a>
       </div>
-      </div>
+    </div>
   );
 }
 

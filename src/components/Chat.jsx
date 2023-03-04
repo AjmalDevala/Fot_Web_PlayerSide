@@ -1,21 +1,31 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-
+import InputEmoji from "react-input-emoji";
+import { BiVideoPlus, BiImageAdd } from "react-icons/bi";
+import { toast, Toaster } from "react-hot-toast";
 function Chat() {
   const [connectedScout, setConnectedScout] = useState([]);
-  const [message, setMessages] = useState([]);
+  const [count, setScoutCount] = useState("");
   const [currentChat, setCurrentChat] = useState({});
+  const [message, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
-
+  const [unread,setUnread]= useState('')
+  const [image, setImage] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
   const token = localStorage.getItem("token");
   const fullname = localStorage.getItem("fullname");
-  const { userId } = localStorage.getItem;
+  const userId = localStorage.getItem("userId");
+  const scoutId = currentChat?._id;
+  const cloudAPI = "dqrsgqgot";
   const scrolRef = useRef();
   const socket = useRef();
+  const imageRef = useRef();
+  const videoRef = useRef();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const connectedScout = async () => {
       const { data } = await axios.post(
         "http://localhost:7007/api/admin/connectedScout",
@@ -24,28 +34,37 @@ function Chat() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setConnectedScout(data.Following);
+      setConnectedScout(data.connectedScout);
+      setScoutCount(data.connectedScout.length);
     };
     connectedScout();
   }, []);
 
-  const handleSelect = (user) => {
-    setCurrentChat(user);
+  const handleSelect = (scout) => {
+    setCurrentChat(scout);
   };
 
+  const UnreadMsg =async()=>{
+    const { data } = await axios.get(
+      `http://localhost:7007/api/admin/userUnread/${userId}`
+    )
+    setUnread(data.count)
+    console.log(data.count);
+  }
+
   useEffect(() => {
-    const getMessages = async (user) => {
-      const token = localStorage.getItem("token");
+    const getMessages = async (scoutId) => {
+      const userId = localStorage.getItem("userId");
       const { data } = await axios.get(
-        `http://localhost:7007/api/admin/getMessages?to=${user}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `http://localhost:7007/api/admin/getMessage/${userId}/${scoutId}`
       );
       setMessages(data);
     };
     getMessages(currentChat._id);
+    UnreadMsg();
+
   }, [currentChat._id]);
+  
 
   useEffect(() => {
     scrolRef.current.scrollIntoView({ behavior: "smooth" });
@@ -54,6 +73,7 @@ function Chat() {
   useEffect(() => {
     if (currentChat !== "") {
       socket.current = io("http://localhost:7007");
+      console.log(userId, "currentChat");
       socket.current.emit("addUser", userId);
     }
   }, [userId]);
@@ -71,13 +91,14 @@ function Chat() {
 
     let data = {
       to: currentChat._id,
+      from: userId,
       message: inputMessage,
     };
-
     await axios.post("http://localhost:7007/api/admin/sendMessage", data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setMessages(message.concat(messages));
+    setInputMessage("");
   };
 
   useEffect(() => {
@@ -92,15 +113,44 @@ function Chat() {
     arrivalMessage && setMessages((pre) => [...pre, arrivalMessage]);
   }, [arrivalMessage]);
 
+  //Sending Media through messages
+  const UploadFile = async () => {
+    if(videoFile === null && image === null){
+      return;
+    }
+    const type = !image ? "video" : "image";
+    const file = !image ? videoFile : image;
+    if(file.size > 7000000){
+      toast.info("🥵 Seems like big a file, take some time")
+    }
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudAPI}/${type}/upload`;
+    const data = new FormData();
+    data.append("file", file);
+    formData.append("upload_preset", "fotwebcloud");
+    try {
+        const res = await axios(cloudinaryUrl, {
+            method: "post",
+            body: data,
+        });
+        const json = await res.json();
+        const url = json.url;
+    } catch (err) {
+        toast.error("Oops, uploading failed", toastConfig);
+    }
+}
+
+
+
   return (
     <div>
-      <div class="flex h-screen antialiased text-gray-800">
-        <div class="flex flex-row h-full w-full overflow-x-hidden">
-          <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
-            <div class="flex flex-row items-center justify-center h-12 w-full">
-              <div class="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
+      <Toaster position="top-center"></Toaster>
+      <div className="flex h-screen antialiased text-gray-800">
+        <div className="flex flex-row h-full w-full overflow-x-hidden">
+          <div className="flex flex-col py-8 pl-6 pr-2 w-48 bg-white flex-shrink-0">
+            <div className="flex flex-row items-center justify-center h-12 w-full">
+              <div className="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
                 <svg
-                  class="w-6 h-6"
+                  className="w-6 h-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -114,48 +164,61 @@ function Chat() {
                   ></path>
                 </svg>
               </div>
-              <div class="ml-2 font-bold text-2xl">Chat</div>
+              <div className="ml-2 font-bold text-2xl">Chat</div>
             </div>
-            <div class="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">
-              <div class="h-20 w-20 rounded-full border overflow-hidden">
+            <div className="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-36 py-6 px-4 rounded-lg">
+              <div className="h-20 w-15 rounded-full border overflow-hidden">
                 <img
                   src="https://avatars3.githubusercontent.com/u/2763884?s=128"
                   alt="Avatar"
-                  class="h-full w-full"
+                  className="h-full w-full"
                 />
               </div>
-              <div class="text-sm font-semibold mt-2">Scout </div>
-              <div class="text-xs text-gray-500"></div>
-              <div class="flex flex-row items-center mt-3">
-                <div class="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full">
-                  <div class="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
-                </div>
-                <div class="leading-none ml-1 text-xs">Active</div>
+              <div className="text-sm font-semibold mt-2">
+                {currentChat.fullname}{" "}
               </div>
-            </div>
-            <div class="flex flex-col mt-8">
-              <div class="flex flex-row items-center justify-between text-xs">
-                <span class="font-bold">Active Conversations</span>
-                <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">
-                  4
+              <div className="flex flex-row items-center justify-between text-xs">
+                <span className="font-bold">Notification</span>
+                <span className="flex items-center justify-center ml-2 bg-green-400 h-4 w-4 rounded-full">
+                  {unread}
                 </span>
               </div>
-              <div class="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
-                
-                <button class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
-                  <div class="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
-                    N
-                  </div>
-                  <div class="ml-2 text-sm font-semibold">nihal </div>
-                </button>
-                
+              <div className="flex flex-row items-center mt-3">
+                <div className="flex flex-col justify-center h-4 w-8 bg-indigo-500 rounded-full">
+                  <div className="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
+                </div>
+                <div className="leading-none ml-1 text-xs">Active</div>
+              </div>
+            </div>
+            <div className="flex flex-col mt-8">
+              <div className="flex flex-row items-center justify-between text-xs">
+                <span className="font-bold">Active Conversations</span>
+                <span className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">
+                  {count}
+                </span>
+              </div>
+
+              <div className="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
+                {connectedScout.map((Connect) => (
+                  <button
+                    onClick={() => handleSelect(Connect)}
+                    className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                  >
+                    <div className="flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full">
+                      {Connect.fullname[0]}
+                    </div>
+                    <div className="ml-2 text-sm font-semibold online-dot">
+                      {Connect.fullname}{" "}
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
-          <div class="flex flex-col flex-auto h-full p-6">
-            <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-              <div class="flex flex-col h-full overflow-x-auto mb-4">
-                <div className="flex flex-col h-full">
+          <div className="flex flex-col flex-auto h-full p-6">
+            <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
+              <div className="flex flex-col h-full overflow-x-auto mb-4">
+                <div className="flex flex-col h-screen">
                   <div className="grid grid-cols-12 gap-y-2">
                     {message.map((msg) =>
                       msg.myself ? (
@@ -186,41 +249,93 @@ function Chat() {
                   </div>
                 </div>
               </div>
-              <div class="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
-                <div class="flex-grow ml-4">
-                  <div class="relative w-full">
+              <div className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
+                <div className="flex-grow ml-4">
+                  <div className="relative w-full">
                     <input
+                      value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       type="text"
-                      class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                      className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                     />
-                    <button class="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
-                      <svg
-                        class="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                      </svg>
+                    <button className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
+                      <InputEmoji
+                        value={inputMessage}
+                        onChange={setInputMessage}
+                      />
                     </button>
+
+                    <div
+                      style={{
+                        display: "block",
+                        textAlign: "center",
+                        height: "max-content",
+                        position: "absolute",
+                        marginTop: "-7em",
+                        marginLeft: "-0.7em",
+                      }}
+                    >
+                      <div
+                        onClick={() => imageRef.current.click()}
+                        style={{
+                          backgroundColor: "#FFFFFF",
+                          padding: "5px",
+                          borderRadius: "50%",
+                          // marginBottom: "0.1em",
+                        }}
+                        >
+                        <BiImageAdd
+                          style={{ fontSize: "2em", color: "#21F052" }}
+                        />
+                        <input
+                          disabled={videoFile}
+                          onChange={(e) => {
+                            setImage(e.target.files[0]);
+                          }}
+                          type="file"
+                          id="file"
+                          ref={imageRef}
+                          style={{ display: "none" }}
+                          accept="image/x-png,image/gif,image/jpeg"
+                        />
+                      </div>
+
+                      {/* <div
+                        onClick={() => videoRef.current.click()}
+                        style={{
+                          backgroundColor: "#FFFFFF",
+                          padding: "5px",
+                          borderRadius: "50%",
+                          marginBottom: "0.2em",
+                        }}
+                       >
+                        <BiVideoPlus
+                          style={{ fontSize: "2em", color: "#EC4768" }}
+                        />
+                        <input
+                          disabled={image}
+                          onChange={(e) => {
+                            setVideoFile(e.target.files[0]);
+                          }}
+                          type="file"
+                          id="file"
+                          ref={videoRef}
+                          style={{ display: "none" }}
+                          accept="video/mp4,video/x-m4v,video/*"
+                        />
+                      </div> */}
+                    </div>
                   </div>
                 </div>
-                <div class="ml-4">
+                <div className="ml-4">
                   <button
                     onClick={sendmsg}
-                    class="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
+                    className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
                   >
                     <spanv className=" ">Send</spanv>
-                    <span class="ml-2">
+                    <span className="ml-2">
                       <svg
-                        class="w-4 h-4 transform = rotate-45 -mt-px"
+                        className="w-4 h-4 transform = rotate-45 -mt-px"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

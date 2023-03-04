@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
 function Profile() {
-  const [userPrime,setUserPrime] = useState(false)
+  const [userPrime, setUserPrime] = useState(false);
   const token = localStorage.getItem("token");
   const [user, setUser] = useState("");
   const [userData, setUserData] = useState("");
@@ -21,7 +21,7 @@ function Profile() {
         toast.success("updation successful");
         setUser(res.data.user);
         setUserData(res.data.userData);
-        setUserPrime(res.data.user.premium)
+        setUserPrime(res.data.user.premium);
       })
       .catch((error) => {
         console.log(error);
@@ -31,7 +31,7 @@ function Profile() {
   const Navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
-    "/src/assets/images/Scout.jpg",
+    "/src/assets/images/player.jpg",
     "/src/assets/images/player.jpg",
     "/src/assets/images/Scout.jpg",
     "/src/assets/images/Scout.jpg",
@@ -49,10 +49,10 @@ function Profile() {
     );
   }
 
+ 
 
   return (
     <>
-      
       <div class="h-full bg-gray-200 p-8">
         <div class="bg-white rounded-lg shadow-xl pb-8">
           <div class="w-full h-[250px]">
@@ -69,7 +69,7 @@ function Profile() {
               className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
             >
               EDIT profile
-             </button>
+            </button>
           </div>
           <div class="flex flex-col items-center -mt-32">
             <img
@@ -79,23 +79,23 @@ function Profile() {
             />
             <div class="flex items-center space-x-2 mt-2">
               <p class="text-2xl">{user?.fullname}</p>
-              { userPrime !=false && (
-              <span class="bg-blue-500 rounded-full p-1" title="Verified">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="text-gray-100 h-2.5 w-2.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="4"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-              </span>
+              {userPrime != false && (
+                <span class="bg-blue-500 rounded-full p-1" title="Verified">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="text-gray-100 h-2.5 w-2.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="4"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                </span>
               )}
             </div>
 
@@ -286,6 +286,11 @@ function Profile() {
                       If you're looking for random paragraphs
                     </p>
                   </div>
+
+
+                  
+
+
 
                   <div className="relative w-full h-72 overflow-hidden bg-gray-900">
                     <img

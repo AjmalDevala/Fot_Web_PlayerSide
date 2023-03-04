@@ -10,6 +10,8 @@ import PricingPage from "./page/PricingPage";
 import ProfilePage from "./page/ProfilePage";
 import ScoutPage from "./page/ScoutPage";
 import Signup from "./page/SignupPage";
+import ProtectedRoutes from '../ProtectedRoutes'
+
 function App() {
   return (
     <BrowserRouter>
@@ -20,13 +22,13 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<Signup />} />
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/scout" element={<ScoutPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/chat" element={<ProtectedRoutes><ChatPage /></ProtectedRoutes>} />
+        <Route path="/scout" element={<ProtectedRoutes><ScoutPage /></ProtectedRoutes>} />
+        <Route path="/pricing" element={<ProtectedRoutes><PricingPage /></ProtectedRoutes>} />
+        <Route path="/profile" element={<ProtectedRoutes><ProfilePage /></ProtectedRoutes>} />
         <Route path="/otp" element={<OtpPage />} />
-        <Route path="/editProfile" element={<EditProfile />} />
-        <Route path="/singlePage" element={<SinglePage />} />
+        <Route path="/editProfile" element={<ProtectedRoutes><EditProfile /></ProtectedRoutes>} />
+        <Route path="/singlePage" element={<ProtectedRoutes><SinglePage /></ProtectedRoutes>} />
 
                {/* error Page */}
           <Route path="*" element={<PageNotFound/>} /> 

@@ -4,6 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./layout/Navbar";
 import moment from "moment";
+import Instance from "./config/Instance";
 
 //edit profile
 const EditProfile = () => {
@@ -13,10 +14,9 @@ const EditProfile = () => {
   }, []);
 
   const showProfile = async () => {
-    await axios
-      .get("http://localhost:7007/api/showProfile", {
-        headers: { Authorization: `Bearer ${token} ` },
-      })
+    await Instance.get("/showProfile", {
+      headers: { Authorization: `Bearer ${token} ` },
+    })
       .then((res) => {
         setUser(res.data.user);
         setFullName(res.data.user.fullname);
@@ -42,8 +42,6 @@ const EditProfile = () => {
         toast.error(error.response.data.error);
       });
   };
-
- 
 
   //ceating and updating
 
@@ -84,27 +82,25 @@ const EditProfile = () => {
         const profileUrl = res.data.secure_url;
         console.log(res.data.secure_url);
         const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("userId");
-        await axios
-          .post(
-            `http://localhost:7007/api/editProfile/${userId}`,
-            {
-              profileUrl,
-              position,
-              dateOfBirth,
-              nationality,
-              age,
-              height,
-              foot,
-              currentTeam,
-              previousTeam,
-              language,
-              awards,
-              address,
-              description,
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
+        await Instance.post(
+          `/editProfile`,
+          {
+            profileUrl,
+            position,
+            dateOfBirth,
+            nationality,
+            age,
+            height,
+            foot,
+            currentTeam,
+            previousTeam,
+            language,
+            awards,
+            address,
+            description,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
           .then((response) => {
             if (response) {
               toast.success("Profile Added Successfully");
@@ -125,25 +121,22 @@ const EditProfile = () => {
   const Upload = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    await axios
-      .post(
-        "http://localhost:7007/api/editAccount",
-        {
-          fullname,
-          email,
-          phone,
-        },
-        {
-          headers: { Authorization: `Bearer ${token} ` },
-        }
-      )
-      .then((res) => {
-        const { msg } = res.data;
-        toast.success(msg);
-      });
+    await Instance.post(
+      "/editAccount",
+      {
+        fullname,
+        email,
+        phone,
+      },
+      {
+        headers: { Authorization: `Bearer ${token} ` },
+      }
+    ).then((res) => {
+      const { msg } = res.data;
+      toast.success(msg);
+    });
   };
 
-  console.log(dateOfBirth,'topppppppppppppppppp')
   return (
     <div>
       <>
@@ -177,7 +170,7 @@ const EditProfile = () => {
                       <img
                         class="w-20 border-4 border-white rounded-full"
                         src={profileUrl}
-                        alt="notget"
+                        alt="AddProfile"
                       />
                     </div>
                     <div className="flex text-sm text-gray-600">
@@ -188,12 +181,20 @@ const EditProfile = () => {
                         <span className="">Upload a your photo</span>
                         <input
                           onChange={(e) => {
-                            setProfile(e.target.files[0]);
+                            const file = e.target.files[0];
+                            if (file && /\.(jpe?g|png)$/i.test(file.name)) {
+                              setProfile(file);
+                            } else {
+                              console.log(
+                                "Invalid file type. Please select a JPEG or PNG image."
+                              );
+                            }
                           }}
                           id="file-upload"
                           name="file-upload"
-                          type="file"
                           className="sr-only"
+                          required
+                          type="file"
                         />
                       </label>
                     </div>
@@ -223,8 +224,7 @@ const EditProfile = () => {
                 </select>
               </div>
 
-              {dateOfBirth.length >1 ? (
-                
+              {dateOfBirth.length > 1 ? (
                 <div>
                   <label
                     className="text-white dark:text-gray-200"
@@ -446,6 +446,7 @@ const EditProfile = () => {
             </div>
           </form>
         </section>
+        {/* Accound section */}
 
         <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-xl dark:bg-gray-800 mt-20">
           <h2 className="text-lg font-semibold text-gray-700 capitalize dark:text-white">

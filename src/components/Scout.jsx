@@ -1,13 +1,14 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import ShowScoutModal from "../redux/showScoutModal";
 import { Link, useNavigate } from "react-router-dom";
+import Instance from "./config/Instance";
 
 function Scout() {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token")
   const [search, setSearch] = useState("");
   const [user, setUser] = useState(false);
   const [change, setChange] = useState(false);
@@ -25,8 +26,10 @@ function Scout() {
   };
   const [scout, setScout] = useState([]);
   useEffect(() => {
-    axios
-      .get(`http://localhost:7007/api/admin/allScout?userId=${userId}`)
+    Instance
+      .get(`/admin/allScout`,{
+        headers:{Authorization:`Bearer ${token}`}
+      })
       .then((response) => {
         setScout(response.data.scout);
         setTempScout(response.data.scout);
@@ -36,26 +39,26 @@ function Scout() {
   }, [change]);
 
   const connected = () => {
-    axios
+    const token = localStorage.getItem("token")
+    Instance
       .get(
-        `http://localhost:7007/api/admin//connectedScoutCheck?userId=${userId}`
-      )
+        `/admin/connectedScoutCheck`,{
+          headers:{Authorization:`Bearer ${token}`}
+        })
       .then((response) => {
         setConnectedScout(response.data.connectedScout);
       });
   };
 
   const Connect = (id) => {
-    change === true ? setChange(false) : setChange(true);
-    const userId = localStorage.getItem("userId");
-    axios
-      .post(
-        `http://localhost:7007/api/connectScout?userId=${userId}&scoutId=${id}`
-      )
-      .then((response) => {
-        toast.success(response.data.msg);
-        SetWaiting(response.data.waiting);
-        console.log(SetWaiting);
+    const token = localStorage.getItem("token")
+    Instance
+    .post(`/connectScout?scoutId=${id}`,{},{
+      headers:{Authorization:`Bearer ${token}`}
+    })
+    .then((response) => {
+      change === true ? setChange(false) : setChange(true);
+      toast.success(response.data.msg);
       })
       .catch((error) => {
         toast.error(error.response.data.error);
@@ -140,12 +143,12 @@ function Scout() {
                   >
                     High experience
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => filterByCountry("india")}
                     className="mx-auto lg:mx-0 bg-blue-500/40 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline  transition hover:scale-105 duration-300 ease-in-out"
                   >
                     Other Country
-                  </button>
+                  </button> */}
                  
                 </div>
               </>
@@ -272,7 +275,7 @@ function Scout() {
                               </button>
                             ) : (
                               <button
-                                onClick={() => Connect(player.userId._id)}
+                                onClick={() => Connect(scout.scoutId._id)}
                                 className="mx-auto lg:mx-0 hover:none bg-emerald-200 text-gray-800 font-bold box-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
                               >
                                 Connect!

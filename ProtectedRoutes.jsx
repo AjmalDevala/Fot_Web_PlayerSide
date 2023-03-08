@@ -1,11 +1,12 @@
 import axios from "axios"
 import { Navigate } from "react-router-dom"
+import Instance from "./src/components/config/Instance"
 
 const protectedRoutes = ({ children }) => {
     const token = localStorage.getItem("token")
     if(token){
-        axios
-        .get("http://localhost:7007/api/verifyUser",
+        Instance
+        .get("/verifyUser",
         {headers : {
           Authorization : "Bearer " + localStorage.getItem("token"),
       }})

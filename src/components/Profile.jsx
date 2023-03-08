@@ -1,8 +1,8 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import Instance from "./config/Instance";
 
 function Profile() {
   const [userPrime, setUserPrime] = useState(false);
@@ -13,8 +13,8 @@ function Profile() {
     showProfile();
   }, []);
   const showProfile = async () => {
-    await axios
-      .get("http://localhost:7007/api/showProfile", {
+    await Instance
+      .get("/showProfile", {
         headers: { Authorization: `Bearer ${token} ` },
       })
       .then((res) => {

@@ -1,7 +1,7 @@
-import axios from "axios"
 import React, { useState ,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import Instance from "./config/Instance";
 
 function Otp() {
 
@@ -16,11 +16,7 @@ useEffect(() => {
 const verifyOtp = (e)=>{
     e.preventDefault()
     
-    axios.post("http://localhost:7007/api/userSignup",{
-        otpvalue
-        
-    }).then(()=>{
-
+    Instance.post("/userSignup",{otpvalue}).then(()=>{
         navigate('/login' ,{replace:true})
     })
 }
@@ -30,7 +26,7 @@ const resendOtp = ()=>{
  try{
    toast.success("Resending OTP")
  
-  axios.get('http://localhost:7007/api/resendOtp').then((response)=>{
+  Instance.get('/resendOtp').then((response)=>{
 
   if(response){
 

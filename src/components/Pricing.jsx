@@ -1,12 +1,13 @@
-import axios from "axios";
 import React from "react";
 import ReactDOM from "react-dom";
 import { toast, Toaster} from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Instance from "./config/Instance";
 
 function Pricing() {
   const PayPalButton = paypal.Buttons.driver("react", { React, ReactDOM });
   const userId = localStorage.getItem("userId")
+  const token = localStorage.getItem("token")
   const createOrder = (data, actions) => {
     return actions.order.create({
       purchase_units: [
@@ -23,8 +24,9 @@ function Pricing() {
   const onApprove = async (data) => {
     const {orderID} = data
     if(orderID){ 
-      axios
-      .post(`http://localhost:7007/api/premiumPlayer/${userId}`, {
+      Instance
+      .post(`/premiumPlayer`,{}, {
+        headers:{Authorization:`Bearer ${token}`}
       }).then((res) => {
       toast.success("payment succes")
        navigate('/scout')

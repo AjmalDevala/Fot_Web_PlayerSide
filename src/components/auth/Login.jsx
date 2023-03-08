@@ -1,11 +1,11 @@
 import React from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import  {loginValidation} from "../../helper/validate";
 import { useDispatch } from "react-redux";
 import { authenticate } from "../../redux/auth";
+import Instance from "../config/Instance";
 function Login() {
   
   const dispatch = useDispatch();
@@ -22,14 +22,14 @@ function Login() {
     validateOnChange: false,
     onSubmit: async (values) => {
     console.log("happy ending");
-      await axios.post('http://localhost:7007/api/userLogin',{values}).then((res)=>{
+      await Instance.post('/userLogin',{values}).then((res)=>{
         
       let { token } = res.data;
         localStorage.setItem('token', token);
         localStorage.setItem('fullname',res.data.user.fullname)
         localStorage.setItem('userId',res.data.user._id)
         dispatch(authenticate());
-        navigate('/')
+        navigate('/',{replace:true})
       }).catch((error)=>{
         console.log(error)
         toast.error(error.response.data.error)

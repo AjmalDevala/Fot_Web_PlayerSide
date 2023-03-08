@@ -1,17 +1,19 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Instance from "./config/Instance";
 import Navbar from "./layout/Navbar";
 
 function SinglePage() {
-
+    const token = localStorage.getItem("token")
     const navigate =useNavigate()
     const location =useLocation()
     const scoutId =location?.state
 
     const [scout, setScout] = useState([]);
     useEffect(() => {
-      axios.get(`http://localhost:7007/api/singleScout/${scoutId}`)
+      Instance.get(`/singleScout/${scoutId}`,{
+        headers:{Authorization:`Bearer ${token}`}
+      })
       .then((response) => {
         setScout(response.data.scout);
       });

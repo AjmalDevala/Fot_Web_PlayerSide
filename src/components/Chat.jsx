@@ -4,6 +4,20 @@ import { io } from "socket.io-client";
 import InputEmoji from "react-input-emoji";
 import { BiVideoPlus, BiImageAdd } from "react-icons/bi";
 import { toast, Toaster } from "react-hot-toast";
+import Instance from "./config/Instance";
+import { format } from "timeago.js";
+
+const toastConfig = {
+  position: "top-center",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "colored",
+};
+
 function Chat() {
   const [connectedScout, setConnectedScout] = useState([]);
   const [count, setScoutCount] = useState("");
@@ -11,7 +25,7 @@ function Chat() {
   const [message, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [unread,setUnread]= useState('')
+  const [unread, setUnread] = useState("");
   const [image, setImage] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const token = localStorage.getItem("token");
@@ -27,8 +41,8 @@ function Chat() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const connectedScout = async () => {
-      const { data } = await axios.post(
-        "http://localhost:7007/api/admin/connectedScout",
+      const { data } = await Instance.post(
+        "/admin/connectedScout",
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -44,27 +58,26 @@ function Chat() {
     setCurrentChat(scout);
   };
 
-  const UnreadMsg =async()=>{
-    const { data } = await axios.get(
-      `http://localhost:7007/api/admin/userUnread/${userId}`
-    )
-    setUnread(data.count)
-    console.log(data.count);
-  }
+  const UnreadMsg = async () => {
+    const token = localStorage.getItem("token");
+    const { data } = await Instance.get("/admin/userUnread",{
+        headers:{Authorization:`Bearer ${token}`}
+      });
+    setUnread(data.count);
+  };
 
   useEffect(() => {
     const getMessages = async (scoutId) => {
+      const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
-      const { data } = await axios.get(
-        `http://localhost:7007/api/admin/getMessage/${userId}/${scoutId}`
-      );
+      const { data } = await Instance.get(`/admin/getMessage/${userId}/${scoutId}`,{
+        headers:{Authorization:`Bearer ${token}`}
+      });
       setMessages(data);
     };
     getMessages(currentChat._id);
     UnreadMsg();
-
   }, [currentChat._id]);
-  
 
   useEffect(() => {
     scrolRef.current.scrollIntoView({ behavior: "smooth" });
@@ -73,7 +86,6 @@ function Chat() {
   useEffect(() => {
     if (currentChat !== "") {
       socket.current = io("http://localhost:7007");
-      console.log(userId, "currentChat");
       socket.current.emit("addUser", userId);
     }
   }, [userId]);
@@ -87,14 +99,16 @@ function Chat() {
     socket.current.emit("send-msg", {
       to: currentChat._id,
       message: inputMessage,
+      type: "text",
     });
 
     let data = {
       to: currentChat._id,
       from: userId,
       message: inputMessage,
+      type: "text",
     };
-    await axios.post("http://localhost:7007/api/admin/sendMessage", data, {
+    await Instance.post("/admin/sendMessage", data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setMessages(message.concat(messages));
@@ -103,8 +117,12 @@ function Chat() {
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-receive", (msg) => {
-        setArrivalMessage({ myself: false, message: msg });
+      socket.current.on("msg-receive", (data) => {
+        setArrivalMessage({
+          myself: false,
+          message: data.message,
+          type: data.type,
+        });
       });
     }
   }, [arrivalMessage]);
@@ -115,31 +133,55 @@ function Chat() {
 
   //Sending Media through messages
   const UploadFile = async () => {
-    if(videoFile === null && image === null){
+    if (videoFile === null && image === null) {
       return;
     }
     const type = !image ? "video" : "image";
     const file = !image ? videoFile : image;
-    if(file.size > 7000000){
-      toast.info("🥵 Seems like big a file, take some time")
+    if (file.size > 7000000) {
+      toast.info("🥵 Seems like a big file, take some time",toastConfig);
     }
     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudAPI}/${type}/upload`;
     const data = new FormData();
     data.append("file", file);
-    formData.append("upload_preset", "fotwebcloud");
+    data.append("upload_preset", "fotwebcloud");
+    data.append("cloud_name", "dqrsgqgot");
     try {
-        const res = await axios(cloudinaryUrl, {
-            method: "post",
-            body: data,
-        });
-        const json = await res.json();
-        const url = json.url;
+      const res = await fetch(cloudinaryUrl, {
+        method: "post",
+        body: data,
+      });
+      const json = await res.json();
+      const url = json.url;
+
+      const messages = {
+        myself: true,
+        message: url,
+        type: type,
+      };
+      socket.current.emit("send-msg", {
+        to: currentChat._id,
+        message: url,
+        type: type,
+      });
+      let fileData = {
+        to: currentChat._id,
+        from: userId,
+        message: url,
+        type,
+      };
+      await axios.post(
+        "http://localhost:7007/api/admin/sendMessage",
+        fileData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setMessages(message.concat(messages));
     } catch (err) {
-        toast.error("Oops, uploading failed", toastConfig);
+      toast.error("Oops, uploading failed");
     }
-}
-
-
+  };
 
   return (
     <div>
@@ -215,6 +257,22 @@ function Chat() {
               </div>
             </div>
           </div>
+
+          {/* <div
+            ref={scroll}
+            key={id}
+            className={message.senderId === currentUser ? "own" : "message"}
+          >
+            {message.type === "text" && (
+              <span>{message.text ? message.text : ""}</span>
+            )}
+            {message.type === "image" && <img src={message.text}></img>}
+            {message.type === "video" && (
+              <video src={message.text} controls></video>
+            )}
+            <span className="date">{format(message.createdAt)}</span>
+          </div> */}
+
           <div className="flex flex-col flex-auto h-full p-6">
             <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
               <div className="flex flex-col h-full overflow-x-auto mb-4">
@@ -228,18 +286,37 @@ function Chat() {
                         >
                           <div className="flex items-center justify-start flex-row-reverse">
                             <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                              <div>{msg.message}</div>
+                              {msg?.type === "video" ? (
+                                <video src={msg.message} controls></video>
+                              ) : msg.type === "image" ? (
+                                <img src={msg.message}></img>
+                              ) : (
+                                <span>{msg.message ? msg.message : ""}</span>
+                              )}
+                              <span className="date">
+                                {format(msg.createdAt)}
+                              </span>
                             </div>
                           </div>
                         </div>
                       ) : (
                         <div
-                          key={msg.message}
+                          key={msg._id}
                           className="col-start-1 col-end-8 p-3 rounded-lg"
                         >
                           <div className="flex flex-row items-center">
                             <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                              <div>{msg.message}</div>
+                              {msg?.type === "video" ? (
+                                <video src={msg.message} controls></video>
+                              ) : msg.type === "image" ? (
+                                <img src={msg.message}></img>
+                              ) : (
+                                <span>{msg.message ? msg.message : ""}</span>
+                              )}
+                              <span className="date">
+                                {format(msg.createdAt)}
+                              </span>
+                              {/* <div>{msg.message}</div> */}
                             </div>
                           </div>
                         </div>
@@ -283,7 +360,7 @@ function Chat() {
                           borderRadius: "50%",
                           // marginBottom: "0.1em",
                         }}
-                        >
+                      >
                         <BiImageAdd
                           style={{ fontSize: "2em", color: "#21F052" }}
                         />
@@ -300,7 +377,7 @@ function Chat() {
                         />
                       </div>
 
-                      {/* <div
+                      <div
                         onClick={() => videoRef.current.click()}
                         style={{
                           backgroundColor: "#FFFFFF",
@@ -308,7 +385,7 @@ function Chat() {
                           borderRadius: "50%",
                           marginBottom: "0.2em",
                         }}
-                       >
+                      >
                         <BiVideoPlus
                           style={{ fontSize: "2em", color: "#EC4768" }}
                         />
@@ -323,13 +400,15 @@ function Chat() {
                           style={{ display: "none" }}
                           accept="video/mp4,video/x-m4v,video/*"
                         />
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="ml-4">
                   <button
-                    onClick={sendmsg}
+                    onClick={() =>
+                      inputMessage === "" ? UploadFile() : sendmsg()
+                    }
                     className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
                   >
                     <spanv className=" ">Send</spanv>

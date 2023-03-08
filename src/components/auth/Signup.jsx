@@ -1,9 +1,10 @@
 import React from "react";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { siginupValidation } from "../../helper/validate";
+import Instance from "../config/Instance";
 function SignUp() {
   const navigate = useNavigate();
   const Formik = useFormik({
@@ -23,12 +24,10 @@ function SignUp() {
         toast.dismiss();
       }, 30000);
 
-      await axios
-        .post("http://localhost:7007/api/sendOtp", { values })
+      await Instance
+        .post("/api/sendOtp", { values })
         .then((res) => {
-         
           navigate("/otp", { replace: true });
-      
         })
         .catch((error) => {
           console.log(error);

@@ -175,7 +175,7 @@ function Chat() {
         type,
       };
       await Instance.post(
-        "http:/admin/sendMessage",
+        "/admin/sendMessage",
         fileData,
         {
           headers: { Authorization: `Bearer ${token}` },

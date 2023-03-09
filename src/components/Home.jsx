@@ -4,11 +4,10 @@ import { useNavigate } from "react-router-dom";
 function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
-    "/src/assets/images/6.jpg  ",
-    "/src/assets/images/5.jpg ",
-    "/src/assets/images/7.jpg",
-    "/src/assets/images/6.jpg  ",
-    "/src/assets/images/8.jpg",
+    "/images/6.jpg  ",
+    "/images/5.jpg ",
+    "/images/7.jpg",
+    "/images/6.jpg  "
   ];
 
   useEffect(() => {
@@ -68,7 +67,7 @@ function Home() {
             <div class="w-full md:w-3/5  text-center">
               <img
                 class="w-full md:w-4/5 z-50"
-                src="/src/assets/images/undraw_junior_soccer_6sop (1).png"
+                src="/images/undraw_junior_soccer_6sop (1).png"
               />
             </div>
           </div>
@@ -154,7 +153,7 @@ function Home() {
             </div>
             <div className="w-full sm:w-1/2 p-6 ">
               <div class="w-full   text-center">
-                <img class="w-full z-50" src="/src/assets/images/trining.png" />
+                <img class="w-full z-50" src="/images/trining.png" />
               </div>
             </div>
           </div>
@@ -162,7 +161,7 @@ function Home() {
           <div class="flex flex-wrap flex-col-reverse sm:flex-row">
             <div className="w-full sm:w-1/2 p-6 ">
               <div class="w-full   text-center">
-                <img class="w-full z-50" src="/src/assets/images/goly.png" />
+                <img class="w-full z-50" src="/images/goly.png" />
               </div>
             </div>
             <div class="w-full sm:w-1/2 p-6 mt-6">
@@ -225,7 +224,7 @@ function Home() {
             </div>
             <div className="w-full sm:w-1/2 p-6 ">
               <div class="w-full   text-center">
-                <img class="w-full z-50" src="/src/assets/images/undraw_junior_soccer_6sop.png" />
+                <img class="w-full z-50" src="/images/undraw_junior_soccer_6sop.png" />
               </div>
             </div>
           </div>
@@ -235,7 +234,7 @@ function Home() {
               <div class="w-full   text-center">
                 <img
                   class="w-full z-50"
-                  src="/src/assets/images/recovery.png"
+                  src="/images/recovery.png"
                 />
               </div>
             </div>
@@ -293,7 +292,7 @@ function Home() {
             </div>
             <div className="w-full sm:w-1/2 p-6 ">
               <div class="w-full   text-center">
-                <img class="w-full z-50" src="/src/assets/images/jym.png" />
+                <img class="w-full z-50" src="/images/jym.png" />
               </div>
             </div>
           </div>

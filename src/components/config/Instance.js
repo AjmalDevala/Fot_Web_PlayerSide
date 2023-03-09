@@ -5,5 +5,4 @@ const Instance = axios.create({
   baseURL: "https://fotweb.evotym.site/api",
 });
 
-
 export default Instance;

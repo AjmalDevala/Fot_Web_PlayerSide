@@ -25,7 +25,7 @@ function SignUp() {
       }, 30000);
 
       await Instance
-        .post("/api/sendOtp", { values })
+        .post("/sendOtp", { values })
         .then((res) => {
           navigate("/otp", { replace: true });
         })

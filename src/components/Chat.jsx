@@ -174,8 +174,8 @@ function Chat() {
         message: url,
         type,
       };
-      await axios.post(
-        "http://localhost:7007/api/admin/sendMessage",
+      await Instance.post(
+        "http:/admin/sendMessage",
         fileData,
         {
           headers: { Authorization: `Bearer ${token}` },

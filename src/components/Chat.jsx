@@ -88,7 +88,8 @@ function Chat() {
 
   useEffect(() => {
     if (currentChat !== "") {
-      socket.current = io("http://localhost:7007");
+      // socket.current = io("http://localhost:7007");
+      socket.current = io("https://fotweb.evotym.site/api");
       socket.current.emit("addUser", userId);
     }
   }, [userId]);

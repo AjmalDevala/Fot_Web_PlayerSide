@@ -195,6 +195,7 @@ const EditProfile = () => {
                           className="sr-only"
                           required
                           type="file"
+                          accept="image/x-png,image/gif,image/jpeg"
                         />
                       </label>
                     </div>

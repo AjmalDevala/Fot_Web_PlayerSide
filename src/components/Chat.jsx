@@ -5,7 +5,7 @@ import InputEmoji from "react-input-emoji";
 import { BiVideoPlus, BiImageAdd } from "react-icons/bi";
 import { toast, Toaster } from "react-hot-toast";
 import Instance from "./config/Instance";
-import { format } from "timeago.js";
+import dateFormat, { masks } from "dateformat";
 
 const toastConfig = {
   position: "top-center",
@@ -60,9 +60,9 @@ function Chat() {
 
   const UnreadMsg = async () => {
     const token = localStorage.getItem("token");
-    const { data } = await Instance.get("/admin/userUnread",{
-        headers:{Authorization:`Bearer ${token}`}
-      });
+    const { data } = await Instance.get("/admin/userUnread", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setUnread(data.count);
   };
 
@@ -70,9 +70,12 @@ function Chat() {
     const getMessages = async (scoutId) => {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
-      const { data } = await Instance.get(`/admin/getMessage/${userId}/${scoutId}`,{
-        headers:{Authorization:`Bearer ${token}`}
-      });
+      const { data } = await Instance.get(
+        `/admin/getMessage/${userId}/${scoutId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setMessages(data);
     };
     getMessages(currentChat._id);
@@ -139,7 +142,7 @@ function Chat() {
     const type = !image ? "video" : "image";
     const file = !image ? videoFile : image;
     if (file.size > 7000000) {
-      toast.info("🥵 Seems like a big file, take some time",toastConfig);
+      toast.info("🥵 Seems like a big file, take some time", toastConfig);
     }
     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudAPI}/${type}/upload`;
     const data = new FormData();
@@ -291,11 +294,15 @@ function Chat() {
                               ) : msg.type === "image" ? (
                                 <img src={msg.message}></img>
                               ) : (
-                                <span>{msg.message ? msg.message : ""}</span>
+                                <div className="text-base font-semibold">
+                                {msg.message ? msg.message : ""}
+                              </div>
                               )}
-                              <span className="date">
-                                {format(msg.createdAt)}
-                              </span>
+                                <div className=" flex justify-end">
+                                <p className="text-xs text-slate-500">
+                                  {dateFormat(msg.createdAt, "shortTime")}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -311,12 +318,15 @@ function Chat() {
                               ) : msg.type === "image" ? (
                                 <img src={msg.message}></img>
                               ) : (
-                                <span>{msg.message ? msg.message : ""}</span>
+                                <div className="text-base font-semibold">
+                                  {msg.message ? msg.message : ""}
+                                </div>
                               )}
-                              <span className="date">
-                                {format(msg.createdAt)}
-                              </span>
-                              {/* <div>{msg.message}</div> */}
+                              <div className=" flex justify-end">
+                                <p className="text-xs text-slate-400">
+                                  {dateFormat(msg.createdAt, "shortTime")}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>

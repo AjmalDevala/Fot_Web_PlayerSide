@@ -76,16 +76,6 @@ const Navbar = () => {
                   >
                     .FOT-WEB
                   </a>
-                  <img
-                    className="block h-10 w-auto lg:hidden"
-                    src="/src/assets/images/logo.png"
-                    alt="Your Company"
-                  />
-                  {/* <img
-                    className="hidden h-9 w-auto lg:block"
-                    src="/src/assets/images/logo.png"
-                    alt="Your Company"
-                  /> */}
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">

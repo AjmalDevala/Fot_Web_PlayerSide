@@ -24,16 +24,6 @@ const Navbar = () => {
     navigate("/chat");
   };
 
-  // const navigation = [
-  //   { name: "Home", onclick: home, current: false },
-  //   { name: "Profile", onclick: Profile, current: false },
-  //   { name: "Scout", onclick: Scout, current: false },
-  //   { name: "Chat", onclick: Chat, current: false },
-  //   {premium == false &&
-  //   { name: "Pricing", onclick: pricing, current: false },
-  //   }
-  // ];
-
   const navigation = [
     { name: "Home", onclick: home, current: false },
     { name: "Profile", onclick: Profile, current: false },

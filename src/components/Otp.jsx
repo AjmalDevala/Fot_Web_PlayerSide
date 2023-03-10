@@ -83,7 +83,7 @@ const resendOtp = ()=>{
               ) : (
                 <p className="text-sm text-lightBlue">
                   Didn't get OTP?
-                  <button className="ml-1  text-green-600" onClick={resendOtp}>
+                  <button className="ml-1  text-white" onClick={resendOtp}>
                     Resend
                   </button>
                 </p>

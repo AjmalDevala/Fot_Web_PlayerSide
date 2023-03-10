@@ -191,8 +191,8 @@ function Chat() {
     <div>
       <Toaster position="top-center"></Toaster>
       <div className="flex h-screen antialiased text-gray-800">
-        <div className="flex flex-row h-full w-full overflow-x-hidden">
-          <div className="flex flex-col py-8 pl-6 pr-2 w-48 bg-white flex-shrink-0">
+        <div className="flex flex-row h-full w-full overflow-x-scroll">
+          <div className="flex flex-col py-8 pl-6 pr-2 w-48 bg-white  flex-shrink-0">
             <div className="flex flex-row items-center justify-center h-12 w-full">
               <div className="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
                 <svg
@@ -277,7 +277,7 @@ function Chat() {
             <span className="date">{format(message.createdAt)}</span>
           </div> */}
 
-          <div className="flex flex-col flex-auto h-full p-6">
+          <div className="flex flex-col flex-auto h-full  min-w-[380px] p-6">
             <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
               <div className="flex flex-col h-full overflow-x-auto mb-4">
                 <div className="flex flex-col h-screen">
@@ -293,7 +293,7 @@ function Chat() {
                               {msg?.type === "video" ? (
                                 <video src={msg.message} controls></video>
                               ) : msg.type === "image" ? (
-                                <img src={msg.message}></img>
+                                <img  className="h-96 w-full" src={msg.message}></img>
                               ) : (
                                 <div className="text-base font-semibold">
                                 {msg.message ? msg.message : ""}
@@ -422,7 +422,7 @@ function Chat() {
                     }
                     className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
                   >
-                    <spanv className=" ">Send</spanv>
+                    {/* <spanv className=" ">Send</spanv> */}
                     <span className="ml-2">
                       <svg
                         className="w-4 h-4 transform = rotate-45 -mt-px"

@@ -4,9 +4,8 @@ import moment from "moment";
 import Instance from "./config/Instance";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 function Profile() {
   const [change, setChange] = useState(false);
@@ -55,7 +54,6 @@ function Profile() {
             formData
           )
           .then((res) => {
-            
             console.log(res.data);
             arr.push(res.data.secure_url);
             count == photos.length && resolve(arr);
@@ -70,8 +68,8 @@ function Profile() {
         {
           imageUrl,
         },
-        { headers: { Authorization: `Bearer ${token}` } 
-      })
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
         .then((response) => {
           if (response) {
             toast.success("Photo Added Successfully");
@@ -88,26 +86,24 @@ function Profile() {
     });
   };
 
-
- 
   const handleDelete = async (url) => {
     confirmAlert({
-      title: 'Confirm Delete',
-      message: 'Are you sure you want to delete this Photo?',
+      title: "Confirm Delete",
+      message: "Are you sure you want to delete this Photo?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: async () => {
             change === true ? setChange(false) : setChange(true);
             await Instance.post(
               `/pohotoDelete`,
               { url },
               { headers: { Authorization: `Bearer ${token}` } }
-            ).then(() => toast.success('done'));
+            ).then(() => toast.success("done"));
           },
         },
         {
-          label: 'No',
+          label: "No",
           onClick: () => {},
         },
       ],
@@ -119,7 +115,7 @@ function Profile() {
   //   await Instance.post(
   //     `/pohotoDelete`,
   //     {url},
-  //     { headers: { Authorization: `Bearer ${token}` } 
+  //     { headers: { Authorization: `Bearer ${token}` }
   //   })
   //   .then(()=>
   //   toast.success("doone")
@@ -128,7 +124,6 @@ function Profile() {
 
   return (
     <>
-
       <Toaster position="top-center"></Toaster>
       <div class="h-full bg-gray-200 p-8">
         <div class="bg-white rounded-lg shadow-xl pb-8">
@@ -355,7 +350,6 @@ function Profile() {
                     class="block h-full w-full rounded-lg object-cover object-center"
                     src={userData?.profileUrl}
                   />
-              
                 </div>
               </div>
             </div>
@@ -365,7 +359,7 @@ function Profile() {
             <div
               role="main"
               class="flex flex-col items-center justify-center mt-4"
-             >
+            >
               <h1 class="text-4xl font-semibold leading-9 text-center text-gray-800 dark:text-gray-50">
                 Player gallery
               </h1>
@@ -422,10 +416,10 @@ function Profile() {
               </div>
             </form>
           </div>
-        
+
           <section class="overflow-hidden text-neutral-700">
             <div class="container mx-auto px-5 py-2 lg:px-32 lg:pt-12">
-              {gallery.map((item) => (
+              {gallery && gallery.map((item) => (
                 <div key={item.id}>
                   <div class="grid grid-cols-3 gap-4">
                     {item.imageUrl.map((url, index) => (
@@ -436,11 +430,14 @@ function Profile() {
                         <img
                           alt={item.caption || "gallery"}
                           class="block h-full w-full rounded-lg object-cover object-center"
-                          src={url || "https://cdn.dribbble.com/users/478633/screenshots/3103534/patada2.gif"}
+                          src={
+                            url ||
+                            "https://cdn.dribbble.com/users/478633/screenshots/3103534/patada2.gif"
+                          }
                         />
                         <button
                           class="absolute top-0 right-0 p-2 text-red-500 hover:text-red-700"
-                          onClick={() => handleDelete( url)}
+                          onClick={() => handleDelete(url)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -465,9 +462,6 @@ function Profile() {
               ))}
             </div>
           </section>
- 
-              
-
         </div>
       </div>
     </>

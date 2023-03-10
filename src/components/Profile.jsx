@@ -423,7 +423,7 @@ function Profile() {
             </form>
           </div>
         
-        
+        {gallery.length>0 ? (
           <section class="overflow-hidden text-neutral-700">
             <div class="container mx-auto px-5 py-2 lg:px-32 lg:pt-12">
               {gallery.map((item) => (
@@ -437,7 +437,7 @@ function Profile() {
                         <img
                           alt={item.caption || "gallery"}
                           class="block h-full w-full rounded-lg object-cover object-center"
-                          src={url || "https://cdn.dribbble.com/users/478633/screenshots/3103534/patada2.gif" }
+                          src={url}
                         />
                         <button
                           class="absolute top-0 right-0 p-2 text-red-500 hover:text-red-700"
@@ -466,7 +466,13 @@ function Profile() {
               ))}
             </div>
           </section>
-         
+          ):(
+ 
+               <div className="flex justify-center h-60 mt-7">
+                <img src="https://cdn.dribbble.com/users/478633/screenshots/3103534/patada2.gif" alt="" />
+              </div>
+
+          )}
         </div>
       </div>
     </>

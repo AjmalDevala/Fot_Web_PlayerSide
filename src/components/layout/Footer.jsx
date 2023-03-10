@@ -7,7 +7,7 @@ function Footer() {
     <footer aria-label="Site Footer" class="bg-gray-100">
   <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
     <div class="flex justify-center text-teal-600">
-    <img className='h-14' src="/src/assets/images/logo.png " alt="" />
+    <img className='h-14' src="/images/logo.png " alt="" />
     </div>
 
     <p class="mx-auto mt-6 max-w-md text-center leading-relaxed text-gray-500">

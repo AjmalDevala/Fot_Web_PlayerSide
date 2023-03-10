@@ -7,7 +7,7 @@ function Home() {
     "/images/6.jpg  ",
     "/images/5.jpg ",
     "/images/7.jpg",
-    "/images/6.jpg"
+    "/images/6.jpg",
   ];
 
   useEffect(() => {
@@ -54,12 +54,10 @@ function Home() {
                 Sign in
               </button>
               <h2 class="my-4 text-3xl text-gray-800 font-bold leading-tight">
-              want to start your career   as  a   football scout       
-               </h2>
-              <button 
-                class="mx-auto lg:mx-0 hover:bg-blend-color bg-yellow-500 text-gray-800 font-bold border-spacing-1-full  shadow-xl my-6 py-4 px-8  focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-              ><a href="http://127.0.0.1:7009/">Sign in</a>
-                
+                want to start your career as a football scout
+              </h2>
+              <button class="mx-auto lg:mx-0 hover:bg-blend-color bg-yellow-500 text-gray-800 font-bold border-spacing-1-full  shadow-xl my-6 py-4 px-8  focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+                <a href="https://scout.fotweb.site">Sign in</a>
               </button>
             </div>
             {/* <!--Right Col--> */}
@@ -74,7 +72,6 @@ function Home() {
         </div>
       ) : (
         <>
-        
           {/* <div>{name}</div> */}
 
           <div className="relative w-full h-96 overflow-hidden bg-gray-900">
@@ -224,7 +221,10 @@ function Home() {
             </div>
             <div className="w-full sm:w-1/2 p-6 ">
               <div class="w-full   text-center">
-                <img class="w-full z-50" src="/images/undraw_junior_soccer_6sop.png" />
+                <img
+                  class="w-full z-50"
+                  src="/images/undraw_junior_soccer_6sop.png"
+                />
               </div>
             </div>
           </div>
@@ -232,10 +232,7 @@ function Home() {
           <div class="flex flex-wrap flex-col-reverse sm:flex-row">
             <div className="w-full sm:w-1/2 p-6 ">
               <div class="w-full   text-center">
-                <img
-                  class="w-full z-50"
-                  src="/images/recovery.png"
-                />
+                <img class="w-full z-50" src="/images/recovery.png" />
               </div>
             </div>
             <div class="w-full sm:w-1/2 p-6 mt-6">
@@ -281,12 +278,11 @@ function Home() {
                 <br />
                 <br />
                 What young players NEED to make it:
-                
                 <a
                   class="text-pink-500 underline"
                   href="https://youtu.be/mAQP5ASH-BA"
                 >
-                  - DON'T QUIT, IT'S POSSIBLE 
+                  - DON'T QUIT, IT'S POSSIBLE
                 </a>
               </p>
             </div>
@@ -419,14 +415,12 @@ function Home() {
         </g>
       </svg>
       <section class="container mx-auto text-center py-6 mb-12">
-       
-        
         <h3 class="my-4 text-3xl leading-tight">CREATE PROFILE</h3>
         <button
           onClick={() => {
             navigate("/profile");
           }}
-          class="mx-auto lg:mx-0 hover:underline bg-amber-400 text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+          class="mx-auto lg:mx-0 hover:bg-sky-400 bg-teal-100 text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
         >
           Action!
         </button>

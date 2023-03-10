@@ -4,7 +4,8 @@ import { useDispatch } from "react-redux";
 import ShowScoutModal from "../redux/showScoutModal";
 import { Link, useNavigate } from "react-router-dom";
 import Instance from "./config/Instance";
-
+import ReactPaginate from "react-paginate";
+import "../pagenation.css"
 function Scout() {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
@@ -14,6 +15,23 @@ function Scout() {
   const [change, setChange] = useState(false);
   const [tempScout, setTempScout] = useState([]);
   const [connectedScout, setConnectedScout] = useState([]);
+
+
+  //  Pagination......................
+  const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const dataToRender = tempScout.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
+
+//search data .......................................
 
   const searchData = (scout) => {
     return search === ""
@@ -158,7 +176,7 @@ function Scout() {
               <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
                 {user ? (
                   <div className="mt-1 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                    {tempScout.filter(searchData).map((scout) => (
+                    {dataToRender.filter(searchData).map((scout) => (
                       <div key={scout?.id} className="group relative">
                         <Link to={"/singlePage"} state={scout.scoutId._id}>
                           <div className="min-h-80  aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-80 lg:aspect-none lg:h-80">
@@ -303,6 +321,20 @@ function Scout() {
           )}
         </div>
       </div>
+      <ReactPaginate
+        pageCount={Math.ceil(tempScout.length / itemsPerPage)}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageChange}
+        containerClassName="pagination"
+        activeClassName="active"
+        previousLabel="Previous"
+        nextLabel="Next"
+        pageLinkClassName="page-link"
+        previousLinkClassName="page-link"
+        nextLinkClassName="page-link"
+        disabledClassName="disabled"
+      />
     </div>
   );
 }

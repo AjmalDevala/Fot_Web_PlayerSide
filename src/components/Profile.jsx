@@ -1,58 +1,135 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import Instance from "./config/Instance";
+import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
 
 function Profile() {
+  const [change, setChange] = useState(false);
+  const Navigate = useNavigate();
+  const cloudAPI = "dqrsgqgot";
   const [userPrime, setUserPrime] = useState(false);
   const token = localStorage.getItem("token");
   const [user, setUser] = useState("");
   const [userData, setUserData] = useState("");
+  const [gallery, setGallery] = useState([]);
+  const [photos, setPhotos] = useState([]);
   useEffect(() => {
     showProfile();
-  }, []);
+  }, [change]);
+
   const showProfile = async () => {
-    await Instance
-      .get("/showProfile", {
-        headers: { Authorization: `Bearer ${token} ` },
-      })
+    await Instance.get("/showProfile", {
+      headers: { Authorization: `Bearer ${token} ` },
+    })
       .then((res) => {
         toast.success("updation successful");
         setUser(res.data.user);
         setUserData(res.data.userData);
         setUserPrime(res.data.user.premium);
+        setGallery(res.data.gallery);
       })
       .catch((error) => {
         console.log(error);
         toast.error(error.response.data.error);
       });
   };
-  const Navigate = useNavigate();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = [
-    "/src/assets/images/player.jpg",
-    "/src/assets/images/player.jpg",
-    "/src/assets/images/Scout.jpg",
-    "/src/assets/images/Scout.jpg",
-  ];
 
-  function handlePreviousClick() {
-    setCurrentImageIndex(
-      currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1
-    );
-  }
+  const handlePhoto = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    new Promise(async (resolve, reject) => {
+      let arr = [];
+      let count = 0;
+      for (let i = 0; i < photos.length; i++) {
+        count++;
+        formData.append("file", photos[i]);
+        formData.append("upload_preset", "fotwebcloud");
+        await axios
+          .post(
+            `https://api.cloudinary.com/v1_1/${cloudAPI}/image/upload`,
+            formData
+          )
+          .then((res) => {
+            
+            console.log(res.data);
+            arr.push(res.data.secure_url);
+            count == photos.length && resolve(arr);
+          });
+      }
+    }).then(async (res) => {
+      change === true ? setChange(false) : setChange(true);
+      const imageUrl = res;
+      const token = localStorage.getItem("token");
+      await Instance.post(
+        `/gallery`,
+        {
+          imageUrl,
+        },
+        { headers: { Authorization: `Bearer ${token}` } 
+      })
+        .then((response) => {
+          if (response) {
+            toast.success("Photo Added Successfully");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response) {
+            toast.error(error.response.data.error);
+          } else {
+            toast.error(error.message);
+          }
+        });
+    });
+  };
 
-  function handleNextClick() {
-    setCurrentImageIndex(
-      currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1
-    );
-  }
 
  
+  const handleDelete = async (url) => {
+    confirmAlert({
+      title: 'Confirm Delete',
+      message: 'Are you sure you want to delete this Photo?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            change === true ? setChange(false) : setChange(true);
+            await Instance.post(
+              `/pohotoDelete`,
+              { url },
+              { headers: { Authorization: `Bearer ${token}` } }
+            ).then(() => toast.success('done'));
+          },
+        },
+        {
+          label: 'No',
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
+  // const handleDelete = async(url)=>{
+  //   change === true ? setChange(false) : setChange(true);
+  //   await Instance.post(
+  //     `/pohotoDelete`,
+  //     {url},
+  //     { headers: { Authorization: `Bearer ${token}` } 
+  //   })
+  //   .then(()=>
+  //   toast.success("doone")
+  //   )
+  // }
 
   return (
     <>
+
+      <Toaster position="top-center"></Toaster>
       <div class="h-full bg-gray-200 p-8">
         <div class="bg-white rounded-lg shadow-xl pb-8">
           <div class="w-full h-[250px]">
@@ -104,7 +181,7 @@ function Profile() {
           </div>
 
           <div class="my-4 flex flex-col 2xl:flex-row space-y-4 2xl:space-y-0 2xl:space-x-4">
-            <div class="w-full 2xl:w-1/3">
+            <div class="w-full 2xl:2/3">
               <h4 class="text-xl pl-6 text-gray-900 font-bold">
                 Player Personal Info
               </h4>
@@ -252,7 +329,8 @@ function Profile() {
               </div>
               {/*  */}
             </div>
-            <div class="flex flex-col w-full 2xl:w-2/3">
+
+            <div class="flex flex-col w-full 2xl">
               <div class="flex-1 bg-white rounded-lg shadow-xl p-8">
                 <h4 class="text-xl text-gray-900 font-bold">About</h4>
                 <p class="mt-2 text-gray-700">
@@ -270,76 +348,131 @@ function Profile() {
                   dicta autem odio laudantium eligendi commodi distinctio!
                 </p>
               </div>
-
-              <div class="flex justify-center items-center">
-                {/* <!--- more free and premium Tailwind CSS components at https://tailwinduikit.com/ ---> */}
-
-                <div class="2xl:mx-auto 2xl:container lg:px-20 lg:py-16 md:py-12 md:px-6 py-9 px-4 w-96 sm:w-auto">
-                  <div
-                    role="main"
-                    class="flex flex-col items-center justify-center"
-                  >
-                    <h1 class="text-4xl font-semibold leading-9 text-center text-gray-800 dark:text-gray-50">
-                      Player gallery
-                    </h1>
-                    <p class="text-base leading-normal text-center text-gray-600 dark:text-white mt-4 lg:w-1/2 md:w-10/12 w-11/12">
-                      If you're looking for random paragraphs
-                    </p>
-                  </div>
-
-
-                  
-
-
-
-                  <div className="relative w-full h-72 overflow-hidden bg-gray-900">
-                    <img
-                      src={images[currentImageIndex]}
-                      alt={`Image ${currentImageIndex + 1}`}
-                      className="absolute top-0 left-0 w-full h-full object-cover"
-                    />
-                    <button
-                      className="absolute bottom-0 left-0 m-6 bg-white text-gray-900 p-2 rounded-full hover:bg-gray-900 hover:text-white focus:outline-none focus:shadow-outline"
-                      onClick={handlePreviousClick}
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M12.707 5.293l-5 5a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                        <path
-                          fillRule="evenodd"
-                          d="M7 14a1 1 0 012 0v-2.5a.5.5 0 001 0V14a1 1 0 01-2 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="absolute bottom-0 right-0 m-6 bg-white text-gray-900 p-2 rounded-full hover:bg-gray-900 hover:text-white focus:outline-none focus:shadow-outline"
-                      onClick={handleNextClick}
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 5. 293a1 1 0 011.414 0L10 7.586l2. 293-2. 293a1 1 0 111. 414 1.414L11.414 10l2. 293 2. 293a1 1 0 01-1.414 1.414L10 11.414 7. 707 14.707a1 1 0 01-1.414-1.414L8.586 10 6. 293 7.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+              <div class="flex  justify-center mt-16 ">
+                <div class="w-72  h-72 p-1 md:p-2">
+                  <img
+                    alt="gallery"
+                    class="block h-full w-full rounded-lg object-cover object-center"
+                    src={userData?.profileUrl}
+                  />
+              
                 </div>
               </div>
             </div>
           </div>
+
+          <div>
+            <div
+              role="main"
+              class="flex flex-col items-center justify-center mt-4"
+             >
+              <h1 class="text-4xl font-semibold leading-9 text-center text-gray-800 dark:text-gray-50">
+                Player gallery
+              </h1>
+              <p class="text-base leading-normal text-center text-gray-600 dark:text-white mt-4 lg:w-2/2 md:w-10/12 w-11/12">
+                Share your photos and see them displayed in our player gallery!
+              </p>
+            </div>
+
+            <form
+              onSubmit={handlePhoto}
+              enctype="multipart/form-data"
+              class="max-w-sm mx-auto"
+            >
+              <div class="mt-8 flex justify-center">
+                <label
+                  for="images"
+                  class="relative flex flex-col items-center px-4 py-6 bg-white rounded-lg shadow-lg tracking-wide border border-gray-400 cursor-pointer hover:bg-gray-100"
+                >
+                  <span class="text-2xl font-semibold leading-9 text-center text-gray-800 dark:text-gray-50">
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 5v14M5 12h14"
+                      ></path>
+                    </svg>
+                  </span>
+                  <input
+                    type="file"
+                    name="images[]"
+                    id="images"
+                    multiple
+                    class="mt-1 sr-only"
+                    onChange={(e) => {
+                      setPhotos(e.target.files);
+                    }}
+                  />
+                </label>
+              </div>
+              <div class="mt-8 flex justify-center">
+                <button
+                  type="submit"
+                  class="px-6 py-3 bg-teal-400 text-white rounded-full hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Upload photos
+                </button>
+              </div>
+            </form>
+          </div>
+        
+        {gallery.length>0 ? (
+          <section class="overflow-hidden text-neutral-700">
+            <div class="container mx-auto px-5 py-2 lg:px-32 lg:pt-12">
+              {gallery.map((item) => (
+                <div key={item.id}>
+                  <div class="grid grid-cols-3 gap-4">
+                    {item.imageUrl.map((url, index) => (
+                      <div
+                        class="flex relative flex-col w-full p-1 md:p-2"
+                        key={`${item.id}-${index}`}
+                      >
+                        <img
+                          alt={item.caption || "gallery"}
+                          class="block h-full w-full rounded-lg object-cover object-center"
+                          src={url}
+                        />
+                        <button
+                          class="absolute top-0 right-0 p-2 text-red-500 hover:text-red-700"
+                          onClick={() => handleDelete( url)}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 22 20"
+                            fill="currentColor"
+                            class="h-12 w-10"
+                          >
+                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1.414-8.586a1 1 0 011.414-1.414l2.828 2.828 2.828-2.828a1 1 0 111.414 1.414L14.414 10l2.828 2.828a1 1 0 01-1.414 1.414L13 11.414l-2.828 2.828a1 1 0 01-1.414 0 1 1 0 010-1.414L10.586 10 7.757 7.172a1 1 0 010-1.414z" />
+                            <rect
+                              x="4"
+                              y="4"
+                              width="20"
+                              height="16"
+                              fill-opacity="0"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+          ):(
+ 
+               <div className="flex justify-center h-60 mt-7">
+                <img src="https://cdn.dribbble.com/users/478633/screenshots/3103534/patada2.gif" alt="" />
+              </div>
+
+          )}
         </div>
       </div>
     </>

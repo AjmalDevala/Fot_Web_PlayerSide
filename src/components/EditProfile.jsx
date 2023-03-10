@@ -185,15 +185,10 @@ const EditProfile = () => {
                             if (file && /\.(jpe?g|png)$/i.test(file.name)) {
                               setProfile(file);
                             } else {
-                              console.log(
-                                "Invalid file type. Please select a JPEG or PNG image."
-                              );
-                            }
-                          }}
+                              toast.error("Invalid file type. Please select a JPEG or PNG image.");}}}
                           id="file-upload"
                           name="file-upload"
                           className="sr-only"
-                          required
                           type="file"
                           accept="image/x-png,image/gif,image/jpeg"
                         />
